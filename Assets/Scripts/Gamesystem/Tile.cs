@@ -16,7 +16,7 @@ namespace DAE.Gamesystem
 
     //    public TileEventArgs(Tile tile) => Tile = tile;
     //}
-    public class Tile : MonoBehaviour, IPointerClickHandler
+    public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
     {
         
         [SerializeField] private UnityEvent OnActivate;
@@ -51,10 +51,44 @@ namespace DAE.Gamesystem
         private void PositionActivated(object sender, EventArgs e)
         => OnActivate.Invoke();
 
-        public void OnPointerClick(PointerEventData eventData)
+        public void OnPointerEnter(PointerEventData eventData)
         {
+            Debug.Log("OnPointerEnter");
+            if (eventData.pointerDrag == null)
+                return;
 
+            //Card d = eventData.pointerDrag.GetComponent<Card>();
+            //if(d != null) {
+            //	d.placeholderParent = this.transform;
+            //}
+
+
+            //highlight tiles A groep
         }
+
+        public void OnPointerExit(PointerEventData eventData)
+        {
+            Debug.Log("OnPointerExit");
+            if (eventData.pointerDrag == null)
+                return;
+
+            //Card d = eventData.pointerDrag.GetComponent<Card>();
+            //if(d != null && d.placeholderParent==this.transform) {
+            //	d.placeholderParent = d.parentToReturnTo;
+            //}
+
+            //highlight tiles  b goep
+        }
+
+        public void OnDrop(PointerEventData eventData)
+        {
+            Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
+
+            Destroy(eventData.pointerDrag.gameObject);
+        }
+    
+
+        
 
         //public bool Highlight
         //{

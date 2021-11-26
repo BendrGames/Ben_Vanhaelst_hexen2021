@@ -5,13 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scripts.HexSystem
+namespace DAE.HexSystem
 {
     public interface IHand
     {
         public int Handsize { get; }
-        public List<ICard> PlayerHand { get; }
-        public List<ICard> Drawcard();
+
+        public List<ICard> PlayerHandCardList { get; }
+        public void Drawcard();
+        public List<ICard> DiscardCard();
         public void PlayCard();
 
     }

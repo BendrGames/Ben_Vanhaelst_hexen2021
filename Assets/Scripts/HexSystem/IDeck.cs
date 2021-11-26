@@ -10,9 +10,10 @@ namespace DAE.HexSystem
     {
         int DeckSize { get; }
         public List<ICard> CardList { get; }
-        public List<ICard> DeckList {get;}
+        public Stack<ICard> CurrentDeckList {get;}
+        public Stack<ICard> StartingDecklist { get; }
 
-        public List<ICard> GenerateDeck();
+        public void GenerateDeck();
         public List<ICard> ShuffleDeck();
         public List<ICard> ReShuffleDeck();
 

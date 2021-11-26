@@ -8,13 +8,13 @@ using UnityEngine.UI;
 
 namespace DAE.Gamesystem
 {
-    class CardEventArgs : EventArgs
+    public class CardEventArgs : EventArgs
     {
         public Card Card { get; }
         public CardEventArgs(Card piece) => Card = Card;
     }
 
-    class Card : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, ICard
+    public class Card : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, ICard
     {
         [SerializeField] private string _name;
         [SerializeField] private string _description;
