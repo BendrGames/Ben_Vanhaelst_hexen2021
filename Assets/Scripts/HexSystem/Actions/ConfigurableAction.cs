@@ -7,9 +7,10 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem.Moves
 {
-    class ConfigurableAction : ActionBase
+    class ConfigurableAction<TPiece> : ActionBase<TPiece> where TPiece : IPiece
     {
-        public delegate List<Position> PositionCollector(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
+        public delegate List<Position> PositionCollector(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece);
+        //public delegate List<Position> PositionCollector(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
 
         private PositionCollector _positionCollector;
 
@@ -18,9 +19,10 @@ namespace DAE.HexSystem.Moves
             _positionCollector = positionCollector;
         }
 
-        public override List<Position> Positions(Board<Position, ICard> board, Grid<Position> grid, ICard piece)
-            => _positionCollector(board, grid, piece);
+        //public override List<Position> Positions(Board<Position, ICard> board, Grid<Position> grid, ICard piece)
+        //    => _positionCollector(board, grid, piece);
 
-
+        public override List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece)
+           => _positionCollector(board, grid, piece);
     }
 }

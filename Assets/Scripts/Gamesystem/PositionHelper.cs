@@ -1,4 +1,5 @@
 using DAE.BoardSystem;
+using DAE.HexSystem;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,7 +20,7 @@ namespace DAE.Gamesystem
         private float _tileradius = 1;
         public float TileRadius => _tileradius;
 
-        public ( int x, int y) ToGridPosition(Grid<Tile> grid, Transform parent, Vector3 worldPosition)
+        public ( int x, int y) ToGridPosition(Grid<Position> grid, Transform parent, Vector3 worldPosition)
         {
 
             var q = ((2f / 3f) * worldPosition.x) / TileRadius;
@@ -32,7 +33,7 @@ namespace DAE.Gamesystem
             return (x, y);
         }
 
-        public Vector3 ToWorldPosition(Grid<Tile> grid, Transform parent, int x, int y)
+        public Vector3 ToWorldPosition(Grid<Position> grid, Transform parent, int x, int y)
         {
 
             var q = TileRadius * ((3f / 2f) * x);

@@ -1,4 +1,5 @@
 using DAE.Gamesystem;
+using DAE.HexSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,43 +9,78 @@ using UnityEngine.EventSystems;
 
 namespace DAE.Gamesystem
 {
-    //[Serializable]
-    //public class HighLightEvent : UnityEvent<bool> { }
-    public class TileEventArgs : EventArgs
-    {
-        public Tile Tile { get; }
 
-        public TileEventArgs(Tile tile) => Tile = tile;
-    }
+    //public class TileEventArgs : EventArgs
+    //{
+    //    public Tile Tile { get; }
+
+    //    public TileEventArgs(Tile tile) => Tile = tile;
+    //}
     public class Tile : MonoBehaviour, IPointerClickHandler
     {
-        [SerializeField] private HighLightEvent OnHighlight;
+        
+        [SerializeField] private UnityEvent OnActivate;
+        [SerializeField] private UnityEvent Ondeactivate;
 
-        public bool Highlight
+        private Position _model;
+
+        public Position Model
         {
             set
             {
-                OnHighlight.Invoke(value);
+                if (_model != null)
+                {
+                    _model.Activated -= PositionActivated;
+                    _model.Deactivated -= PositionDeactivated;
+                }
+
+                _model = value;
+
+                if (_model != null)
+                {
+                    _model.Activated += PositionActivated;
+                    _model.Deactivated += PositionDeactivated;
+                }
             }
+            get { return _model; }
         }
 
-        public event EventHandler<TileEventArgs> Clicked;
+        private void PositionDeactivated(object sender, EventArgs e)
+        => Ondeactivate.Invoke();
+
+        private void PositionActivated(object sender, EventArgs e)
+        => OnActivate.Invoke();
 
         public void OnPointerClick(PointerEventData eventData)
         {
-            OnClicked(this, new TileEventArgs(this));
+
         }
 
-        protected virtual void OnClicked(object source, TileEventArgs e)
-        {
-            var handler = Clicked;
-            handler?.Invoke(this, e);
-        }
+        //public bool Highlight
+        //{
+        //    set
+        //    {
+        //        OnHighlight.Invoke(value);
+        //    }
+        //}
 
-        public override string ToString()
-        {
-            return gameObject.name;
-        }
+        //public event EventHandler<TileEventArgs> Clicked;
+
+        //public void OnPointerClick(PointerEventData eventData)
+        //{
+        //    OnClicked(this, new TileEventArgs(this));
+        //}
+
+        //protected virtual void OnClicked(object source, TileEventArgs e)
+        //{
+        //    var handler = Clicked;
+        //    handler?.Invoke(this, e);
+        //}
+
+        //public override string ToString()
+        //{
+        //    return gameObject.name;
+        //}
 
         }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DAE.HexSystem;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -19,9 +20,11 @@ namespace DAE.Gamesystem
         public PieceEventArgs(Piece piece) => Piece = piece;
     }
 
-    class Piece : MonoBehaviour, IPointerClickHandler
+    class Piece : MonoBehaviour, IPointerClickHandler, IPiece
     {
         [SerializeField] private HighLightEvent OnHighlight;
+        [SerializeField] private int _playerID;
+        [SerializeField] private PieceType _pieceType;
 
         public bool Highlight
         {
@@ -30,6 +33,10 @@ namespace DAE.Gamesystem
                 OnHighlight.Invoke(value);
             }
         }
+        public int PlayerID => _playerID;
+        //public string Name => gameObject.name;
+        public bool Moved { get; set; }
+        public PieceType PieceType => _pieceType;
 
         public event EventHandler<PieceEventArgs> Clicked;
 

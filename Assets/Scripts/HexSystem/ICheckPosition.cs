@@ -7,15 +7,22 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem
 {
-    interface ICheckPosition
+    interface ICheckPosition<TPiece> where TPiece : IPiece
+    
     {
-        bool CanExecute(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
+        bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece);
 
-        void ExecuteMove(Board<Position, ICard> board, Grid<Position> grid, ICard piece, Position position);
+        void Execute(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
 
-        void ExecuteAttack(Board<Position, ICard> board, Grid<Position> grid, ICard piece, Position position);
+        List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece);
 
-        //SpawnObject
-        List<Position> Positions(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
+        //bool CanExecute(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
+
+        //void ExecuteMove(Board<Position, ICard> board, Grid<Position> grid, ICard piece, Position position);
+
+        //void ExecuteAttack(Board<Position, ICard> board, Grid<Position> grid, ICard piece, Position position);
+
+        ////SpawnObject
+        //List<Position> Positions(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
     }
 }

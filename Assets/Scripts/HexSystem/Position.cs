@@ -7,6 +7,29 @@ using System.Threading.Tasks;
 namespace DAE.HexSystem
 {    public class Position
     {
-        // axial to cube conversion?
+        public event EventHandler Activated;
+        public event EventHandler Deactivated;
+
+        public void Activate()
+        {
+            OnActivate(EventArgs.Empty);
+        }
+        public void Deactivate()
+        {
+            OnDeactivate(EventArgs.Empty);
+        }
+
+
+        protected virtual void OnActivate(EventArgs eventArgs)
+        {
+            var handler = Activated;
+            handler?.Invoke(this, eventArgs);
+        }
+
+        protected virtual void OnDeactivate(EventArgs eventArgs)
+        {
+            var handler = Deactivated;
+            handler?.Invoke(this, eventArgs);
+        }
     }
 }
