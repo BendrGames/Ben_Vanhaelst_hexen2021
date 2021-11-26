@@ -11,7 +11,7 @@ public class Hand : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 		if (eventData.pointerDrag == null)
 			return;
 
-		Card d = eventData.pointerDrag.GetComponent<Card>();
+		CardTest d = eventData.pointerDrag.GetComponent<CardTest>();
 		if (d != null)
 		{
 			d.placeholderParent = this.transform;
@@ -24,7 +24,7 @@ public class Hand : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 		if (eventData.pointerDrag == null)
 			return;
 
-		Card d = eventData.pointerDrag.GetComponent<Card>();
+		CardTest d = eventData.pointerDrag.GetComponent<CardTest>();
 		if (d != null && d.placeholderParent == this.transform)
 		{
 			d.placeholderParent = d.parentToReturnTo;
@@ -35,7 +35,7 @@ public class Hand : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerE
 	{
 		Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
 
-		Card d = eventData.pointerDrag.GetComponent<Card>();
+		CardTest d = eventData.pointerDrag.GetComponent<CardTest>();
 		if (d != null)
 		{
 			d.parentToReturnTo = this.transform;

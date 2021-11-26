@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using System.Collections;
 using UnityEngine.EventSystems;
 
-public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
+public class CardTest : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler {
 	
 	public Transform parentToReturnTo = null;
 	public Transform placeholderParent = null;
@@ -31,9 +31,9 @@ public class Card : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHand
 	}
 	
 	public void OnDrag(PointerEventData eventData) {
-		//Debug.Log ("OnDrag");
-		
-		this.transform.position = eventData.position;
+        Debug.Log("OnDrag");
+
+        this.transform.position = eventData.position;
 
 		if(placeholder.transform.parent != placeholderParent)
 			placeholder.transform.SetParent(placeholderParent);

@@ -24,7 +24,7 @@ namespace DAE.Gamesystem
     {
         //[SerializeField] private HighLightEvent OnHighlight;
         [SerializeField] private int _playerID;
-        [SerializeField] private player _pieceType;
+        [SerializeField] private Player _pieceType;
 
         //public bool Highlight
         //{
@@ -37,7 +37,7 @@ namespace DAE.Gamesystem
         public int PlayerID => _playerID;
         //public string Name => gameObject.name;
         public bool Moved { get; set; }
-        public player PieceType => _pieceType;
+        public Player PieceType => _pieceType;
 
         public event EventHandler<PieceEventArgs> Clicked;
 

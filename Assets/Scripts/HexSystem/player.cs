@@ -8,7 +8,7 @@ namespace DAE.HexSystem
 {
 
     //prob not needed for now
-    public enum player
+    public enum Player
     {
         Player,
         Enemy
