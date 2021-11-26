@@ -8,17 +8,17 @@ namespace DAE.HexSystem
 {
     public interface ICard
     {
-        int player { get; }
-
         string Name { get; }
 
-        bool Moved { get; }
+        bool Played { get; }
 
-
-        //prob dont need this anymore, for now
-        //PieceType PieceType { get; }
         CardType CardType { get; }
-        
-        //object transform { get; }
+
+        bool Click { get; }
+
+        bool Drag { get; }
+
+
+
     }
 }

@@ -1,3 +1,4 @@
+using DAE.HexSystem;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,8 +13,21 @@ namespace DAE.Gamesystem
         public CardEventArgs(Card piece) => Card = Card;
     }
 
-    class Card : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler
+    class Card : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, IDropHandler, ICard
     {
+        [SerializeField] private string _name;
+        [SerializeField] private bool _played;
+        [SerializeField] private bool _click;
+        [SerializeField] private bool _drag;
+
+        [SerializeField] private CardType _cardType;
+
+        public bool Played => _played;
+        public string Name => _name;
+        public CardType CardType => _cardType;
+        public bool Click => _click;
+        public bool Drag => _drag;
+
         public event EventHandler<CardEventArgs> Clicked;
         public event EventHandler<CardEventArgs> BeginDrag;
         public event EventHandler<CardEventArgs> Dragging;

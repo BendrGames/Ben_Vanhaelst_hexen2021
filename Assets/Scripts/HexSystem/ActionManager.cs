@@ -12,7 +12,7 @@ namespace DAE.HexSystem
     public class ActionManager<TPiece> where TPiece : IPiece
     {
         //private MultiValueDictionary<CardType, ICheckPosition> _actions = new MultiValueDictionary<CardType, ICheckPosition>();
-        private MultiValueDictionary<PieceType, ICheckPosition<TPiece>> _actions = new MultiValueDictionary<PieceType, ICheckPosition<TPiece>>();
+        private MultiValueDictionary<player, ICheckPosition<TPiece>> _actions = new MultiValueDictionary<player, ICheckPosition<TPiece>>();
         private readonly Board<Position, TPiece> _board;
         private readonly Grid<Position> _grid;
 
@@ -57,7 +57,7 @@ namespace DAE.HexSystem
             // _actions.Add(CardType.Teleport, new ConfigurableAction((b, g, p)
             //     => new ActionHelper(b, g, p).Collect()));
 
-            _actions.Add(PieceType.Player, new ConfigurableAction<TPiece>((b, g, p)
+            _actions.Add(player.Player, new ConfigurableAction<TPiece>((b, g, p)
             => new ActionHelper<TPiece>(b, g, p).Direction0(3)
                                         .Direction1(3, ActionHelper<TPiece>.IsEmptyTile)
                                         .Direction2(3, ActionHelper<TPiece>.IsEmptyTile)

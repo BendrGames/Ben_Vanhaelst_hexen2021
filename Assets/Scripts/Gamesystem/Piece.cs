@@ -22,21 +22,22 @@ namespace DAE.Gamesystem
 
     class Piece : MonoBehaviour, IPointerClickHandler, IPiece
     {
-        [SerializeField] private HighLightEvent OnHighlight;
+        //[SerializeField] private HighLightEvent OnHighlight;
         [SerializeField] private int _playerID;
-        [SerializeField] private PieceType _pieceType;
+        [SerializeField] private player _pieceType;
 
-        public bool Highlight
-        {
-            set
-            {
-                OnHighlight.Invoke(value);
-            }
-        }
+        //public bool Highlight
+        //{
+        //    set
+        //    {
+        //        OnHighlight.Invoke(value);
+        //    }
+        //}
+
         public int PlayerID => _playerID;
         //public string Name => gameObject.name;
         public bool Moved { get; set; }
-        public PieceType PieceType => _pieceType;
+        public player PieceType => _pieceType;
 
         public event EventHandler<PieceEventArgs> Clicked;
 

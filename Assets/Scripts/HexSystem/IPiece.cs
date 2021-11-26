@@ -14,7 +14,7 @@ namespace DAE.HexSystem
 
         bool Moved { get; }
 
-        PieceType PieceType { get; }
+        player PieceType { get; }
         //object transform { get; }
     }
 }
