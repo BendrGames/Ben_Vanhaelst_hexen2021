@@ -7,26 +7,24 @@ using System.Linq;
 
 namespace DAE.Gamesystem
 {
-    public class Deck : MonoBehaviour, IDeck
+    public class Deck : MonoBehaviour, IDeck<Card>
     {
         [SerializeField]
         private int _decksize;
-        private Stack<ICard> _currentDeckList;
-        private Stack<ICard> _startingDeckList;
+        private Stack<Card> _currentDeckList;
+        private Stack<Card> _startingDeckList;
         [SerializeField]
-        [SerializeReference]
-        private List<ICard> _cardList;
-        [SerializeField]
-        private List<Card> _cardListtest;
+        private List<Card> _cardList;
+      
 
 
         //shuffle shit, generate new deck etc
         public int DeckSize => _decksize;
-        public Stack<ICard> CurrentDeckList => _currentDeckList;
-        public Stack<ICard> StartingDecklist => _startingDeckList;
-        public List<ICard> CardList => _cardList;
+        public Stack<Card> CurrentDeckList => _currentDeckList;
+        public Stack<Card> StartingDecklist => _startingDeckList;
+        public List<Card> CardList => _cardList;
 
-        public Deck(int decksize, List<ICard> cardList)
+        public Deck(int decksize, List<Card> cardList)
         {
             _decksize = decksize;
             _cardList = cardList;
@@ -34,7 +32,7 @@ namespace DAE.Gamesystem
 
         public void GenerateDeck()
         {
-            Stack<ICard> tempdeck = new Stack<ICard>();
+            Stack<Card> tempdeck = new Stack<Card>();
 
             for (int i = 0; i < DeckSize -1; i++)
             {
@@ -46,12 +44,12 @@ namespace DAE.Gamesystem
             _startingDeckList = tempdeck;           
         }
 
-        public List<ICard> ReShuffleDeck()
+        public List<Card> ReShuffleDeck()
         {
             return _startingDeckList.OrderBy(x => Random.value).ToList();
         }
 
-        public List<ICard> ShuffleDeck()
+        public List<Card> ShuffleDeck()
         {
             return _currentDeckList.OrderBy(x => Random.value).ToList();
         }

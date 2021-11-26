@@ -10,16 +10,17 @@ using DAE.HexSystem;
 
 namespace DAE.Gamesystem
 {
-    class PlayerHand: MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IHand
-{
+    class PlayerHand: MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler, IHand<Card>
+	{
 		public Deck PlayerDeck;
+		public GameObject HandView;
 
 		private int _handsize;
-		private List<ICard> _playerHandCardList;
+		private List<Card> _playerHandCardList;
         public int Handsize => _handsize;
-		public List<ICard> PlayerHandCardList => _playerHandCardList;
+		public List<Card> PlayerHandCardList => _playerHandCardList;
 
-        public PlayerHand(Deck playerDeck, int handsize, List<ICard> playerHandCardList)
+        public PlayerHand(Deck playerDeck, int handsize, List<Card> playerHandCardList)
         {
             PlayerDeck = playerDeck;
             _handsize = handsize;
@@ -32,7 +33,7 @@ namespace DAE.Gamesystem
 
         public void Drawcard()
         {
-			_playerHandCardList.Add(PlayerDeck.CurrentDeckList.Pop());			
+            _playerHandCardList.Add(PlayerDeck.CurrentDeckList.Pop());
         }
 
         public void PlayCard()
@@ -41,7 +42,7 @@ namespace DAE.Gamesystem
             throw new NotImplementedException();
         }
 
-        public List<ICard> DiscardCard()
+        public List<Card> DiscardCard()
         {
             throw new NotImplementedException();
         }

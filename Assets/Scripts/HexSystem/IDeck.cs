@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem
 {
-    public interface IDeck
+    public interface IDeck<TCard>
     {
         int DeckSize { get; }
-        public List<ICard> CardList { get; }
-        public Stack<ICard> CurrentDeckList {get;}
-        public Stack<ICard> StartingDecklist { get; }
+        public List<TCard> CardList { get; }
+        public Stack<TCard> CurrentDeckList {get;}
+        public Stack<TCard> StartingDecklist { get; }
 
         public void GenerateDeck();
-        public List<ICard> ShuffleDeck();
-        public List<ICard> ReShuffleDeck();
+        public List<TCard> ShuffleDeck();
+        public List<TCard> ReShuffleDeck();
 
     }
 }

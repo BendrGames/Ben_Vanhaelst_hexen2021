@@ -7,13 +7,13 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem
 {
-    public interface IHand
+    public interface IHand<TCard>
     {
         public int Handsize { get; }
 
-        public List<ICard> PlayerHandCardList { get; }
+        public List<TCard> PlayerHandCardList { get; }
         public void Drawcard();
-        public List<ICard> DiscardCard();
+        public List<TCard> DiscardCard();
         public void PlayCard();
 
     }
