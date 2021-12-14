@@ -11,7 +11,7 @@ namespace DAE.Gamesystem
     public class CardEventArgs : EventArgs
     {
         public Card Card { get; }
-        public CardEventArgs(Card piece) => Card = Card;
+        public CardEventArgs(Card card) => Card = card;
     }
 
     public class Card : MonoBehaviour, IPointerClickHandler, IBeginDragHandler, IDragHandler, IEndDragHandler, ICard
@@ -29,7 +29,7 @@ namespace DAE.Gamesystem
 
 
 
-        [SerializeField] private CardType _cardType;
+        [SerializeField] public CardType _cardType;
 
         public Transform parentToReturnTo = null;
         public Transform placeholderParent = null;
@@ -38,7 +38,7 @@ namespace DAE.Gamesystem
 
         public bool Played => _played;
         public string Name => _name;
-        public CardType CardType => _cardType;
+        public CardType CardType { get; set; }
         public Texture2D CardTexture => _cardTexture;
         public string Description => _description;
         public Color Color => _CardColor;
@@ -59,7 +59,7 @@ namespace DAE.Gamesystem
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            Debug.Log("OnBeginDrag");
+            Debug.Log($"OnBeginDrag {CardType}");
 
             placeholder = new GameObject();
             placeholder.transform.SetParent(this.transform.parent);

@@ -1,4 +1,4 @@
-﻿using System;
+﻿
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,35 +16,40 @@ namespace DAE.Gamesystem
 		public GameObject HandView;
 
 		private int _handsize;
-		private List<Card> _playerHandCardList;
+		public List<Card> _playerHandCardList;
         public int Handsize => _handsize;
 		public List<Card> PlayerHandCardList => _playerHandCardList;
 
-        public PlayerHand(Deck playerDeck, int handsize, List<Card> playerHandCardList)
+        public void InitializePlayerHand(Deck playerDeck, int handsize)
         {
-            PlayerDeck = playerDeck;
+			PlayerDeck = playerDeck;
+			PlayerDeck.GenerateDeck();
+
             _handsize = handsize;
 
-            for (int i = 0; i < _handsize-1; i++)
+            for (int i = 0; i < _handsize; i++)
             {
 				Drawcard();
+				var card = Instantiate(_playerHandCardList[i], HandView.transform);
+				card.gameObject.SetActive(true);
 			}
         }	
 
         public void Drawcard()
         {
-            _playerHandCardList.Add(PlayerDeck.CurrentDeckList.Pop());
+			int randomnum = Random.Range(0, PlayerDeck.CurrentDeckList.Count);
+			_playerHandCardList.Add(PlayerDeck.CurrentDeckList[randomnum]);
+			
         }
 
         public void PlayCard()
         {
-			//get this into the tile when drop
-            throw new NotImplementedException();
+			
         }
 
         public List<Card> DiscardCard()
         {
-            throw new NotImplementedException();
+			return null;
         }
 
         public void OnPointerEnter(PointerEventData eventData)

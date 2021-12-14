@@ -12,10 +12,12 @@ namespace DAE.Gamesystem
     public class PositionEventArgs : EventArgs
     {
         public Position Position { get; }
+        
 
         public PositionEventArgs(Position position)
         {
             Position = position;
+            
         }
     }
 
@@ -63,6 +65,8 @@ namespace DAE.Gamesystem
                 return;
             Debug.Log("OnPointerEnter");
 
+            
+
             OnEntered(new PositionEventArgs(Model));
 
             //Card d = eventData.pointerDrag.GetComponent<Card>();
@@ -80,6 +84,8 @@ namespace DAE.Gamesystem
                 return;
             Debug.Log("OnPointerExit");
 
+            Card d = eventData.pointerDrag.GetComponent<Card>();
+
             OnExited(new PositionEventArgs(Model));
             //Card d = eventData.pointerDrag.GetComponent<Card>();
             //if(d != null && d.placeholderParent==this.transform) {
@@ -89,15 +95,17 @@ namespace DAE.Gamesystem
             //highlight tiles  b goep
         }
 
-        public void OnDrop(PointerEventData eventArgs)
+        public void OnDrop(PointerEventData eventData)
         {
-            Debug.Log(eventArgs.pointerDrag.name + " was dropped on " + gameObject.name);
+            Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
 
-            Destroy(eventArgs.pointerDrag.gameObject);
+            Destroy(eventData.pointerDrag.gameObject);
+
+            Card d = eventData.pointerDrag.GetComponent<Card>();
 
             OnDropped(new PositionEventArgs(Model));
 
-                        
+
         }
 
         protected virtual void OnDropped(PositionEventArgs eventargs)

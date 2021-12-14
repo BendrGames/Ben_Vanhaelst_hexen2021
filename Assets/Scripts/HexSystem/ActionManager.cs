@@ -95,7 +95,7 @@ namespace DAE.HexSystem
             //                                       .Collect()));
         }
 
-        public List<Position> ValidPisitionsFor(TPiece piece)
+        public List<Position> ValidPisitionsFor(TPiece piece, Position Position)
         {
             return _actions[piece.PieceType]
                 .Where(m => m.CanExecute(_board, _grid, piece))

@@ -28,16 +28,22 @@ namespace DAE.Gamesystem
         private Grid<Position> _grid;
         private Board<Position, Piece> _board;
 
-        private PlayerHand<Deck> _playerhand;
-
+        public Deck _deckview;
+        public PlayerHand _playerhand;
         private ActionManager<Piece> _actionManager;
+
+        public Piece Player;
+
+        public CardType CurrentCard;
 
         //[SerializeField]
         //private DeckObject _mydeckObject;
 
         public void Start()
         {
-            //_playerhand = new PlayerHand<DeckObject>(_mydeckObject);
+
+            _playerhand.InitializePlayerHand(_deckview, 5);
+            InitializeHand();
 
             _grid = new Grid<Position>(3, 3);
             ConnectGrid(_grid);
@@ -85,7 +91,25 @@ namespace DAE.Gamesystem
                 e.Piece.Taken();
             };
 
+
+
         }
+
+        private void InitializeHand()
+        {
+            var cards = FindObjectsOfType<Card>();
+            foreach (var card in cards)
+            {
+                card.BeginDrag += (s, e) =>
+                {
+                    CurrentCard = e.Card.CardType;
+
+                    //CurrentCard = e.Card._cardType;
+                    Debug.Log($"draggingEvent {CurrentCard}");
+                };                             
+            }
+        }
+
 
 
         //private void InitializeTileSelection()
@@ -110,25 +134,25 @@ namespace DAE.Gamesystem
 
         private void InitializePieceSelection()
         {
-            _selectionmanagerPiece.Selected += (s, e) =>
-            {
-                var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
+            //_selectionmanagerPiece.Selected += (s, e) =>
+            //{
+            //    var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
 
-                foreach (var position in positions)
-                {
-                    position.Activate();
-                }
-            };
+            //    foreach (var position in positions)
+            //    {
+            //        position.Activate();
+            //    }
+            //};
 
-            _selectionmanagerPiece.DeSelected += (s, e) =>
-            {
-                var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
+            //_selectionmanagerPiece.DeSelected += (s, e) =>
+            //{
+            //    var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
 
-                foreach (var position in positions)
-                {
-                    position.Deactivate();
-                }
-            };
+            //    foreach (var position in positions)
+            //    {
+            //        position.Deactivate();
+            //    }
+            //};
         }
 
         public void DeselectAll()
@@ -148,39 +172,42 @@ namespace DAE.Gamesystem
 
                 view.Dropped += (s, e) =>
                 {
-                    if (!_selectionmanagerPiece.HasSelection)
-                        return;
-                    var selectedpiece = _selectionmanagerPiece.SelectedItem;
-                    var validpositions = _actionManager.ValidPisitionsFor(_selectionmanagerPiece.SelectedItem);
+                    //if (!_selectionmanagerPiece.HasSelection)
+                    //    return;
+                    //var selectedpiece = _selectionmanagerPiece.SelectedItem;
+                    var validpositions = _actionManager.ValidPisitionsFor(Player, e.Position);
 
                     if (validpositions.Contains(e.Position))
                     {
-                        _selectionmanagerPiece.DeselectAll();                        
-                        _actionManager.Move(selectedpiece, position);
-                        
+                        _actionManager.Move(Player, position);
+                        foreach(var position in validpositions)
+                        {
+                            position.Deactivate();
+                        }
+                        //_selectionmanagerPiece.DeselectAll();                        
                     }
-
+                    
                 };
 
-                //view.Entered += (s, e) =>
-                //{
-                //    var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
+                view.Entered += (s, e) =>
+                {
+                    var positions = _actionManager.ValidPisitionsFor(Player, e.Position);
 
-                //    foreach (var position in positions)
-                //    {
-                //        position.Activate();
-                //    }
-                //};
+                    foreach (var position in positions)
+                    {
+                        position.Activate();
+                    }
+                };
 
-                //view.Exitted += (s, e) =>
-                //{
-                //    var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
+                view.Exitted += (s, e) =>
+                {
+                    var positions = _actionManager.ValidPisitionsFor(Player, e.Position);
 
-                //    foreach (var position in positions)
-                //    {
-                //        position.Deactivate();
-                //    }
-                //};
+                    foreach (var position in positions)
+                    {
+                        position.Deactivate();
+                    }
+                };
 
 
 

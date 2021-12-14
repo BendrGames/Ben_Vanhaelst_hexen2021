@@ -11,8 +11,10 @@ namespace DAE.Gamesystem
     {
         [SerializeField]
         private int _decksize;
-        private Stack<Card> _currentDeckList;
-        private Stack<Card> _startingDeckList;
+        [SerializeField]
+        private List<Card> _currentDeckList;
+        [SerializeField]
+        private List<Card> _startingDeckList;
         [SerializeField]
         private List<Card> _cardList;
       
@@ -20,24 +22,19 @@ namespace DAE.Gamesystem
 
         //shuffle shit, generate new deck etc
         public int DeckSize => _decksize;
-        public Stack<Card> CurrentDeckList => _currentDeckList;
-        public Stack<Card> StartingDecklist => _startingDeckList;
+        public List<Card> CurrentDeckList => _currentDeckList;
+        public List<Card> StartingDecklist => _startingDeckList;
         public List<Card> CardList => _cardList;
 
-        public Deck(int decksize, List<Card> cardList)
-        {
-            _decksize = decksize;
-            _cardList = cardList;
-        }
+     
+        public void GenerateDeck()        {           
 
-        public void GenerateDeck()
-        {
-            Stack<Card> tempdeck = new Stack<Card>();
+            List<Card> tempdeck = new List<Card>();
 
-            for (int i = 0; i < DeckSize -1; i++)
+            for (int i = 0; i < DeckSize; i++)
             {
                 var randomnum = Random.Range(0, _cardList.Count);
-                tempdeck.Push(_cardList[randomnum]);
+                tempdeck.Add(_cardList[randomnum]);
             }
 
             _currentDeckList = tempdeck;
