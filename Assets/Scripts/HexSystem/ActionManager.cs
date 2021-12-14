@@ -59,9 +59,9 @@ namespace DAE.HexSystem
 
             _actions.Add(Player.Player, new ConfigurableAction<TPiece>((b, g, p)
             => new ActionHelper<TPiece>(b, g, p).Direction0(3)
-                                        .Direction1(3, ActionHelper<TPiece>.IsEmptyTile)
-                                        .Direction2(3, ActionHelper<TPiece>.IsEmptyTile)
-                                        .Direction3(3, ActionHelper<TPiece>.IsEmptyTile)
+                                        .Direction1(3)
+                                        .Direction2(3)
+                                        .Direction3(3)
                                         .Direction4(3)
                                         .Direction5(3)
                                         .Collect()));

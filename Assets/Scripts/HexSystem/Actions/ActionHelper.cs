@@ -38,6 +38,7 @@ namespace DAE.HexSystem.Moves
         
         public delegate bool Validator(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
 
+
         //public ActionHelper<TPiece ReturnAllAction(int xCenter, int yCenter, int numTiles = int.MaxValue, params Validator[] validators)
         //{
         //    // Do the rangecheck thing, add all to list that dont have a piece.
@@ -116,8 +117,8 @@ namespace DAE.HexSystem.Moves
                     return this;
                 }
 
-                nextXCoordinate = coordinate.x + (xOffset * (2+step));
-                nextYCoordinate = coordinate.y + (yOffset * (2+step));
+                nextXCoordinate += coordinate.x + (xOffset);
+                nextYCoordinate += coordinate.y + (yOffset);
 
                 hasNextPosition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out nextPosition);
 

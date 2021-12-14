@@ -43,16 +43,50 @@ namespace DAE.Gamesystem
             ConnectGrid(_grid);
             _board = new Board<Position, Piece>();
 
-            _actionManager = new ActionManager<Piece>(_board, _grid);
 
             _selectionmanagerPiece = new SelectionManager<Piece>();
             ConnectPiece(_selectionmanagerPiece, _grid, _board);
             InitializePieceSelection();
 
+            _actionManager = new ActionManager<Piece>(_board, _grid);
+
             //_selectionmanagerTile = new SelectionManager<Tile>();
             //ConnectTile(_selectionmanagerTile, _grid, _board);
             //InitializeTileSelection();
+
+            _board.moved += (s, e) =>
+            {
+                //_movemanager.ValidPisitionsFor(e.Piece);
+
+                if (_grid.TryGetCoordinateOf(e.ToPosition, out var toCoordinate))
+                {
+                    var worldPosition = _positionHelper.ToWorldPosition(_grid, _boardParent, toCoordinate.x, toCoordinate.y);
+
+                    e.Piece.MoveTo(worldPosition);
+                }
+
+            };
+
+            _board.placed += (s, e) =>
+            {
+
+                if (_grid.TryGetCoordinateOf(e.ToPosition, out var toCoordinate))
+                {
+                    var worldPosition = _positionHelper.ToWorldPosition(_grid, _boardParent, toCoordinate.x, toCoordinate.y);
+
+
+                    e.Piece.Place(worldPosition);
+                }
+
+            };
+
+            _board.taken += (s, e) =>
+            {
+                e.Piece.Taken();
+            };
+
         }
+
 
         //private void InitializeTileSelection()
         //{
@@ -105,29 +139,66 @@ namespace DAE.Gamesystem
 
         private void ConnectGrid(Grid<Position> grid)
         {
-            var tiles = FindObjectsOfType<Tile>();
-
-            foreach (var tile in tiles)
+            var views = FindObjectsOfType<PositionView>();
+            foreach (var view in views)
             {
                 var position = new Position();
-                tile.Model = position;
+                view.Model = position;
 
-                var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, tile.transform.position);
 
-                Debug.Log($"value of tile { tile.name} is X: {x} and y: {y}");
+                view.Dropped += (s, e) =>
+                {
+                    if (!_selectionmanagerPiece.HasSelection)
+                        return;
+                    var selectedpiece = _selectionmanagerPiece.SelectedItem;
+                    var validpositions = _actionManager.ValidPisitionsFor(_selectionmanagerPiece.SelectedItem);
 
+                    if (validpositions.Contains(e.Position))
+                    {
+                        _selectionmanagerPiece.DeselectAll();                        
+                        _actionManager.Move(selectedpiece, position);
+                        
+                    }
+
+                };
+
+                //view.Entered += (s, e) =>
+                //{
+                //    var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
+
+                //    foreach (var position in positions)
+                //    {
+                //        position.Activate();
+                //    }
+                //};
+
+                //view.Exitted += (s, e) =>
+                //{
+                //    var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
+
+                //    foreach (var position in positions)
+                //    {
+                //        position.Deactivate();
+                //    }
+                //};
+
+
+
+
+                var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, view.transform.position);
+                Debug.Log($"value of tile { view.name} is X: {x} and y: {y}");
 
                 grid.Register(x, y, position);
 
-                tile.gameObject.name = $"tile {x},{y}";
+                view.gameObject.name = $"tile {x},{y}";
             }
         }
 
-        private void ConnectPiece(SelectionManager<Piece> selectionmanager, Grid<Position> grid, Board<Position,Piece> board)
+        private void ConnectPiece(SelectionManager<Piece> selectionmanager, Grid<Position> grid, Board<Position, Piece> board)
         {
             var pieces = FindObjectsOfType<Piece>();
             foreach (var piece in pieces)
-            {                
+            {
                 var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, piece.transform.position);
                 if (grid.TryGetPositionAt(x, y, out var position))
                 {

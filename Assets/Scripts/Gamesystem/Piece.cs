@@ -55,6 +55,22 @@ namespace DAE.Gamesystem
         {
             return gameObject.name;
         }
+
+        public void MoveTo(Vector3 worldPosition)
+        {
+            transform.position = worldPosition;
+        }
+
+        internal void Place(Vector3 worldPosition)
+        {
+            transform.position = worldPosition;
+            gameObject.SetActive(true);
+        }
+
+        internal void Taken()
+        {
+            gameObject.SetActive(false);
+        }
     }
 }
 

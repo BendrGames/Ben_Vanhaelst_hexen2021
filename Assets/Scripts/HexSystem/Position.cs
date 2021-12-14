@@ -31,5 +31,7 @@ namespace DAE.HexSystem
             var handler = Deactivated;
             handler?.Invoke(this, eventArgs);
         }
+
+        
     }
 }

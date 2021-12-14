@@ -25,6 +25,8 @@ namespace DAE.SelectionSystem
         private HashSet<TSelectableItem> _selectableItems = new HashSet<TSelectableItem>();
         public IReadOnlyCollection<TSelectableItem> SelectableItems => _selectableItems;
 
+        public TSelectableItem SelectedItem => _selectableItems.First();
+
         public bool IsSelected( TSelectableItem selectableItem)
             => _selectableItems.Contains(selectableItem);
 
@@ -64,6 +66,8 @@ namespace DAE.SelectionSystem
                 Deselect(selectableItem);
             }
         }
+
+        public bool HasSelection => _selectableItems.Count > 0;
 
         protected virtual void OnSelected(SelectableItemEventArgs<TSelectableItem> eventArgs)
         {

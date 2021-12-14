@@ -9,16 +9,22 @@ using UnityEngine.EventSystems;
 
 namespace DAE.Gamesystem
 {
-
-    //public class TileEventArgs : EventArgs
-    //{
-    //    public Tile Tile { get; }
-
-    //    public TileEventArgs(Tile tile) => Tile = tile;
-    //}
-    public class Tile : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+    public class PositionEventArgs : EventArgs
     {
-        
+        public Position Position { get; }
+
+        public PositionEventArgs(Position position)
+        {
+            Position = position;
+        }
+    }
+
+    public class PositionView : MonoBehaviour, IDropHandler, IPointerEnterHandler, IPointerExitHandler
+    {
+        public event EventHandler<PositionEventArgs> Dropped;
+        public event EventHandler<PositionEventArgs> Entered;
+        public event EventHandler<PositionEventArgs> Exitted;
+
         [SerializeField] private UnityEvent OnActivate;
         [SerializeField] private UnityEvent Ondeactivate;
 
@@ -53,9 +59,11 @@ namespace DAE.Gamesystem
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            Debug.Log("OnPointerEnter");
             if (eventData.pointerDrag == null)
                 return;
+            Debug.Log("OnPointerEnter");
+
+            OnEntered(new PositionEventArgs(Model));
 
             //Card d = eventData.pointerDrag.GetComponent<Card>();
             //if(d != null) {
@@ -68,10 +76,11 @@ namespace DAE.Gamesystem
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            Debug.Log("OnPointerExit");
             if (eventData.pointerDrag == null)
                 return;
+            Debug.Log("OnPointerExit");
 
+            OnExited(new PositionEventArgs(Model));
             //Card d = eventData.pointerDrag.GetComponent<Card>();
             //if(d != null && d.placeholderParent==this.transform) {
             //	d.placeholderParent = d.parentToReturnTo;
@@ -80,15 +89,35 @@ namespace DAE.Gamesystem
             //highlight tiles  b goep
         }
 
-        public void OnDrop(PointerEventData eventData)
+        public void OnDrop(PointerEventData eventArgs)
         {
-            Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
+            Debug.Log(eventArgs.pointerDrag.name + " was dropped on " + gameObject.name);
 
-            Destroy(eventData.pointerDrag.gameObject);
+            Destroy(eventArgs.pointerDrag.gameObject);
+
+            OnDropped(new PositionEventArgs(Model));
+
+                        
         }
-    
 
-        
+        protected virtual void OnDropped(PositionEventArgs eventargs)
+        {
+            var handler = Dropped;
+            handler?.Invoke(this, eventargs);
+        }
+
+        protected virtual void OnEntered(PositionEventArgs eventargs)
+        {
+            var handler = Entered;
+            handler?.Invoke(this, eventargs);
+        }
+
+        protected virtual void OnExited(PositionEventArgs eventargs)
+        {
+            var handler = Exitted;
+            handler?.Invoke(this, eventargs);
+        }
+
 
         //public bool Highlight
         //{
@@ -116,5 +145,5 @@ namespace DAE.Gamesystem
         //    return gameObject.name;
         //}
 
-        }
+    }
 }

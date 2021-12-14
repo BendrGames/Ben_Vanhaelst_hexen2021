@@ -20,15 +20,14 @@ namespace DAE.Gamesystem
         private float _tileradius = 1;
         public float TileRadius => _tileradius;
 
-        public ( int x, int y) ToGridPosition(Grid<Position> grid, Transform parent, Vector3 worldPosition)
+        public (int x, int y) ToGridPosition(Grid<Position> grid, Transform parent, Vector3 worldPosition)
         {
 
             var q = ((2f / 3f) * worldPosition.x) / TileRadius;
-            //var r = ((-2f / 3f) * worldPosition.x) + ((Mathf.Sqrt(3f) / 3f) * worldPosition.z) / TileRadius;
-            var r2 = ((-1f / 3f) * worldPosition.x) + (Mathf.Sqrt(3f) / 3f * worldPosition.z) / TileRadius;
+            var r = ((-1f / 3f) * worldPosition.x) + (Mathf.Sqrt(3f) / 3f * worldPosition.z) / TileRadius;
 
             var x = (int)Mathf.Round(q);
-            var y = (int)Mathf.Round(r2);
+            var y = (int)Mathf.Round(r);
 
             return (x, y);
         }
@@ -50,32 +49,32 @@ namespace DAE.Gamesystem
 
 }
 
-            //var relativePosition = worldPosition - parent.position;
+//var relativePosition = worldPosition - parent.position;
 
-            //var scaledRelativePosition = relativePosition / _tileDimension;
+//var scaledRelativePosition = relativePosition / _tileDimension;
 
-            //var scaledBoardOffset = new Vector3(grid.rows / 2.0f, 0, grid.columns / 2.0f);
-            //scaledRelativePosition += scaledBoardOffset;
+//var scaledBoardOffset = new Vector3(grid.rows / 2.0f, 0, grid.columns / 2.0f);
+//scaledRelativePosition += scaledBoardOffset;
 
-            //var scaledHalfTileOffset = new Vector3(0.5f / 2.0f, 0, 0.5f);
-            //scaledRelativePosition -= scaledHalfTileOffset; 
+//var scaledHalfTileOffset = new Vector3(0.5f / 2.0f, 0, 0.5f);
+//scaledRelativePosition -= scaledHalfTileOffset; 
 
-            //var x = (int)Mathf.Round(scaledRelativePosition.x);
-            //var y = (int)Mathf.Round(scaledRelativePosition.z);
+//var x = (int)Mathf.Round(scaledRelativePosition.x);
+//var y = (int)Mathf.Round(scaledRelativePosition.z);
 
-            //return (x, y);
-            
+//return (x, y);
+
 
 //var scaledRelativePosition = new Vector3(x, 0, y);
 
-            //var scaledHalfTileOffset = new Vector3(0.5f / 2.0f, 0, 0.5f);
-            //scaledRelativePosition += scaledHalfTileOffset;
+//var scaledHalfTileOffset = new Vector3(0.5f / 2.0f, 0, 0.5f);
+//scaledRelativePosition += scaledHalfTileOffset;
 
-            //var scaledBoardOffset = new Vector3(grid.rows / 2.0f, 0, grid.columns / 2.0f);
-            //scaledRelativePosition -= scaledBoardOffset;
+//var scaledBoardOffset = new Vector3(grid.rows / 2.0f, 0, grid.columns / 2.0f);
+//scaledRelativePosition -= scaledBoardOffset;
 
-            //var relativePosition = scaledRelativePosition * _tileDimension;
+//var relativePosition = scaledRelativePosition * _tileDimension;
 
-            //var worldPosition = relativePosition + parent.position;
+//var worldPosition = relativePosition + parent.position;
 
-            //return worldPosition;
+//return worldPosition;

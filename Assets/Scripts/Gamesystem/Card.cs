@@ -126,10 +126,7 @@ namespace DAE.Gamesystem
 
             OnClicked(this, new CardEventArgs(this));
         }
-        //public void OnDrop(PointerEventData eventData)
-        //{
-        //    OnIDrop(this, new CardEventArgs(this));
-        //}
+        
 
         protected virtual void OnClicked(object source, CardEventArgs e)
         {

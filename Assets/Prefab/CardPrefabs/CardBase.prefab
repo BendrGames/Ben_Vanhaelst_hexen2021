@@ -129,9 +129,7 @@ MonoBehaviour:
   _description: 
   _played: 0
   _cardTexture: {fileID: 0}
-  _CardColor:
-    serializedVersion: 2
-    rgba: 16777215
+  _CardColor: {r: 0, g: 0, b: 0, a: 0}
   CardImage: {fileID: 147584}
   Cardcolour: {fileID: 107266}
   TitleText: {fileID: 115016}
@@ -217,7 +215,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Black Lotus
+  m_Text: Title
 --- !u!1 &147584
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,4 +366,4 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: This is a super powerful awesome card that makes you win.
+  m_Text: Discription
