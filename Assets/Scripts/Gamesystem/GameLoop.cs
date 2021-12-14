@@ -23,7 +23,7 @@ namespace DAE.Gamesystem
         [SerializeField]
         private Transform _boardParent;
 
-        private SelectionManager<Piece> _selectionmanagerPiece;
+        //private SelectionManager<Piece> _selectionmanagerPiece;
         //private SelectionManager<Tile> _selectionmanagerTile;
         private Grid<Position> _grid;
         private Board<Position, Piece> _board;
@@ -50,8 +50,8 @@ namespace DAE.Gamesystem
             _board = new Board<Position, Piece>();
 
 
-            _selectionmanagerPiece = new SelectionManager<Piece>();
-            ConnectPiece(_selectionmanagerPiece, _grid, _board);
+            //_selectionmanagerPiece = new SelectionManager<Piece>();
+            ConnectPiece(/*_selectionmanagerPiece,*/ _grid, _board);
             InitializePieceSelection();
 
             _actionManager = new ActionManager<Piece>(_board, _grid);
@@ -157,7 +157,7 @@ namespace DAE.Gamesystem
 
         public void DeselectAll()
         {
-            _selectionmanagerPiece.DeselectAll();
+            //_selectionmanagerPiece.DeselectAll();
             //_selectionmanagerTile.DeselectAll();
         }
 
@@ -221,7 +221,7 @@ namespace DAE.Gamesystem
             }
         }
 
-        private void ConnectPiece(SelectionManager<Piece> selectionmanager, Grid<Position> grid, Board<Position, Piece> board)
+        private void ConnectPiece(/*SelectionManager<Piece> selectionmanager,*/ Grid<Position> grid, Board<Position, Piece> board)
         {
             var pieces = FindObjectsOfType<Piece>();
             foreach (var piece in pieces)
@@ -231,12 +231,12 @@ namespace DAE.Gamesystem
                 {
                     Debug.Log("registered");
 
-                    piece.Clicked += (s, e) =>
-                    {
-                        _selectionmanagerPiece.DeselectAll();
+                    //piece.Clicked += (s, e) =>
+                    //{
+                    //    _selectionmanagerPiece.DeselectAll();
 
-                        selectionmanager.Toggle(s as Piece);
-                    };
+                    //    selectionmanager.Toggle(s as Piece);
+                    //};
 
                     board.Place(piece, position);
                 }
