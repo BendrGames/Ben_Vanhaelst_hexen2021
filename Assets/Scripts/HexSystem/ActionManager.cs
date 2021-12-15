@@ -12,18 +12,20 @@ namespace DAE.HexSystem
     public class ActionManager<TPiece> where TPiece : IPiece
     {
         //private MultiValueDictionary<CardType, ICheckPosition> _actions = new MultiValueDictionary<CardType, ICheckPosition>();
-        private MultiValueDictionary<Player, ICheckPosition<TPiece>> _actions = new MultiValueDictionary<Player, ICheckPosition<TPiece>>();
+        private MultiValueDictionary<CardType, ICheckPosition<TPiece>> _actions = new MultiValueDictionary<CardType, ICheckPosition<TPiece>>();
         private readonly Board<Position, TPiece> _board;
         private readonly Grid<Position> _grid;
 
-        public ActionManager(Board<Position, TPiece> board, Grid<Position> grid/*deck?*/)
+        public ActionManager(Board<Position, TPiece> board, Grid<Position> grid)
         {
+            //cardtype?
             _board = board;
             _grid = grid;
 
             InitializeMoves();
-
         }
+
+        
 
         private void InitializeMoves()
         {
@@ -57,13 +59,41 @@ namespace DAE.HexSystem
             // _actions.Add(CardType.Teleport, new ConfigurableAction((b, g, p)
             //     => new ActionHelper(b, g, p).Collect()));
 
-            _actions.Add(Player.Player, new ConfigurableAction<TPiece>((b, g, p)
-            => new ActionHelper<TPiece>(b, g, p).Direction0(3)
-                                        .Direction1(3)
-                                        .Direction2(3)
-                                        .Direction3(3)
-                                        .Direction4(3)
-                                        .Direction5(3)
+            _actions.Add(CardType.Beam, new ConfigurableAction<TPiece>((b, g, p)
+            => new ActionHelper<TPiece>(b, g, p)
+                                        .Direction4(10)
+                                        .Direction0(10)
+                                        .Direction1(10)
+                                        .Direction2(10)
+                                        .Direction3(10)
+                                        .Direction5(10)
+                                        .Collect()));
+
+            _actions.Add(CardType.Thunderclap, new ConfigurableAction<TPiece>((b, g, p)
+            => new ActionHelper<TPiece>(b, g, p)
+                                        .Direction0(1)
+                                        .Direction1(1)
+                                        .Direction2(1)
+                                        .Direction3(1)
+                                        .Direction4(1)
+                                        .Direction5(1)
+                                        .Collect()));
+
+            _actions.Add(CardType.Cleave, new ConfigurableAction<TPiece>((b, g, p)
+            => new ActionHelper<TPiece>(b, g, p)
+                                        .Direction0(1)
+                                        .Direction1(1)
+                                        .Direction2(1)
+                                        .Collect()));
+
+            _actions.Add(CardType.Teleport, new ConfigurableAction<TPiece>((b, g, p)
+            => new ActionHelper<TPiece>(b, g, p)
+                                        .Direction0(8)
+                                        .Direction1(8)
+                                        .Direction2(8)
+                                        .Direction3(8)
+                                        .Direction4(8)
+                                        .Direction5(8)
                                         .Collect()));
 
             // _actions.Add(PieceType.Player, new ConfigurableAction((b, g, p)
@@ -95,17 +125,17 @@ namespace DAE.HexSystem
             //                                       .Collect()));
         }
 
-        public List<Position> ValidPisitionsFor(TPiece piece, Position Position)
+        public List<Position> ValidPisitionsFor(TPiece piece, CardType card)
         {
-            return _actions[piece.PieceType]
+            return _actions[card]
                 .Where(m => m.CanExecute(_board, _grid, piece))
                 .SelectMany(m => m.Positions(_board, _grid, piece))
                 .ToList();
         }
 
-        public void Move(TPiece piece, Position position)
+        public void Move(TPiece piece, Position position, CardType card)
         {
-            _actions[piece.PieceType]
+            _actions[card]
             .Where(m => m.CanExecute(_board, _grid, piece))
             .First(m => m.Positions(_board, _grid, piece).Contains(position))
             .Execute(_board, _grid, piece, position);

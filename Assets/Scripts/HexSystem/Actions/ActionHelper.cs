@@ -117,8 +117,8 @@ namespace DAE.HexSystem.Moves
                     return this;
                 }
 
-                nextXCoordinate += coordinate.x + (xOffset);
-                nextYCoordinate += coordinate.y + (yOffset);
+                nextXCoordinate = coordinate.x + ((step + 1) * xOffset);
+                nextYCoordinate = coordinate.y + ((step + 1) * yOffset);
 
                 hasNextPosition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out nextPosition);
 

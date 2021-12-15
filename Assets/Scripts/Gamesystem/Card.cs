@@ -59,7 +59,7 @@ namespace DAE.Gamesystem
 
         public void OnBeginDrag(PointerEventData eventData)
         {
-            Debug.Log($"OnBeginDrag {CardType}");
+            //Debug.Log($"OnBeginDrag {CardType}");
 
             placeholder = new GameObject();
             placeholder.transform.SetParent(this.transform.parent);
@@ -82,7 +82,7 @@ namespace DAE.Gamesystem
 
         public void OnDrag(PointerEventData eventData)
         {
-            Debug.Log("OnDrag");
+            //Debug.Log("OnDrag");
 
             this.transform.position = eventData.position;
 
@@ -112,7 +112,7 @@ namespace DAE.Gamesystem
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            Debug.Log("OnEndDrag");
+            //Debug.Log("OnEndDrag");
             this.transform.SetParent(parentToReturnTo);
             this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
             GetComponent<CanvasGroup>().blocksRaycasts = true;
