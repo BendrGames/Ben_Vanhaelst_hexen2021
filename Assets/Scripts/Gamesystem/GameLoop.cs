@@ -43,7 +43,14 @@ namespace DAE.Gamesystem
         {
 
             _playerhand.InitializePlayerHand(_deckview, 5);
-            InitializeHand();
+            DrawCard();
+            DrawCard();
+            DrawCard();
+            DrawCard();
+            DrawCard();
+            //InitializeHand();
+
+
 
             _grid = new Grid<Position>(3, 3);
             ConnectGrid(_grid);
@@ -95,19 +102,31 @@ namespace DAE.Gamesystem
 
         }
 
-        private void InitializeHand()
-        {
-            var cards = FindObjectsOfType<Card>();
-            foreach (var card in cards)
-            {                
-                card.BeginDrag += (s, e) =>
-                {
-                    CurrentCard = e.Card;                                       
+        //private void InitializeHand()
+        //{
+        //    var cards = FindObjectsOfType<Card>();
+        //    foreach (var card in cards)
+        //    {                
+        //        card.BeginDrag += (s, e) =>
+        //        {
+        //            CurrentCard = e.Card;                                       
                     
-                    Debug.Log($"draggingEvent {CurrentCard}");
-                };                             
-            }
+        //            Debug.Log($"draggingEvent {CurrentCard}");
+        //        };                             
+        //    }
+        //}
+
+        private void DrawCard()
+        {
+            var card = _playerhand.Drawcard();
+            card.BeginDrag += (s, e) =>
+            {
+                CurrentCard = e.Card;
+
+                Debug.Log($"draggingEvent {CurrentCard}");
+            };
         }
+
 
 
 
@@ -180,7 +199,9 @@ namespace DAE.Gamesystem
                         foreach(var position in validpositions)
                         {
                             position.Deactivate();
-                        }                                                                   
+                        }
+                        _playerhand.Drawcard();
+                        
                     }
 
                 };

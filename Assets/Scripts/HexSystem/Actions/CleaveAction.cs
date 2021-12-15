@@ -9,16 +9,30 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem.Actions
 {
+
     class CleaveAction<TCard, TPiece> : ActionBase<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
+        
+        public bool DisplayFullSelection;
+
         public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
-            return base.CanExecute(board, grid, position, piece, card);
+            if (TotalValidPositions(board, grid, position, piece, card).Contains(position))
+            {
+                DisplayFullSelection = true;
+                return true;
+            }
+
+            else
+            {
+                DisplayFullSelection = false;
+                return true;
+            }
         }
 
         public override void ExecuteAction(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
-            foreach (var hex in Positions(board, grid, position, piece, card))
+            foreach (var hex in TotalValidPositions(board, grid, position, piece, card))
             {
                 if (board.TryGetPieceAt(hex, out var enemy))
                 {
@@ -31,18 +45,27 @@ namespace DAE.HexSystem.Actions
             }
         }
 
-        public override List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        public override List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
             ActionHelper<TCard, TPiece> actionHelper = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
             actionHelper.Direction0(1)
                         .Direction1(1)
                         .Direction2(1);
 
-            //how to get in right direction?
+           
+
+            ActionHelper<TCard, TPiece> actionHelperPartual = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
+            actionHelperPartual.TargettedDirection0(1)
+                        .TargettedDirection1(1)
+                        .TargettedDirection2(1);
                         
 
+            if (!DisplayFullSelection)
+                return actionHelper.Collect();
 
-            return actionHelper.Collect();
+            else
+                return actionHelperPartual.Collect();
+
         }
     }
 }

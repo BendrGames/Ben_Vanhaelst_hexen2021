@@ -53,6 +53,69 @@ namespace DAE.HexSystem.Actions
             return board.TryGetPieceAt(position, out var enemyPiece) && enemyPiece.PlayerID != piece.PlayerID;
         }
 
+        public ActionHelper<TCard, TPiece> SelectSIngle(params Validator[] validators)
+        {
+            _validPositions.Add(_position);
+            return this;
+        }
+
+        public ActionHelper<TCard, TPiece> TargetedStraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
+        {
+            List<Position> TempvalidPositions = new List<Position>();
+
+            if (!_board.TryGetPositionOf(_piece, out var positionPlayer))
+                return this;
+
+            if (!_grid.TryGetCoordinateOf(positionPlayer, out var coordinate))
+                return this;
+
+            var nextXCoordinate = coordinate.x + xOffset;
+            var nextYCoordinate = coordinate.y + yOffset;
+
+            var hasNextPosition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out var nextPosition);
+            int step = 0;
+
+            while (hasNextPosition && step < numTiles)
+            {
+
+                var isOk = validators.All((v) => v(_board, _grid, _piece, nextPosition));
+                if (!isOk)
+                    return this;
+
+                var hasPiece = _board.TryGetPieceAt(nextPosition, out var nextPiece);
+                if (!hasPiece)
+                {
+                    TempvalidPositions.Add(nextPosition);
+                }
+                else
+                {
+                    //detect other pieces shit
+                    if (nextPiece.PlayerID == _piece.PlayerID)
+                        return this;
+
+                    TempvalidPositions.Add(nextPosition);
+                    return this;
+                }
+
+                nextXCoordinate = coordinate.x + ((step + 1) * xOffset);
+                nextYCoordinate = coordinate.y + ((step + 1)* yOffset);
+
+                hasNextPosition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out nextPosition);              
+               
+                step++;
+            }
+            
+            if (TempvalidPositions.Contains(_position))
+            {
+                foreach (var pos in TempvalidPositions)
+                {
+                    _validPositions.Add(pos);
+                }
+            }
+
+            return this;
+        }
+
         public ActionHelper<TCard, TPiece> StraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
         {
             if (!_board.TryGetPositionOf(_piece, out var position))
@@ -90,15 +153,19 @@ namespace DAE.HexSystem.Actions
                 }
 
                 nextXCoordinate = coordinate.x + ((step + 1) * xOffset);
-                nextYCoordinate = coordinate.y + ((step + 1)* yOffset);
+                nextYCoordinate = coordinate.y + ((step + 1) * yOffset);
 
                 hasNextPosition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out nextPosition);
 
                 step++;
             }
+            
+             return this;
+           
+           
+        }
 
-            return this;
-        }    
+
 
 
         internal ActionHelper<TCard, TPiece> Direction0(int numTiles = int.MaxValue, params Validator[] validators)
@@ -113,6 +180,19 @@ namespace DAE.HexSystem.Actions
          => StraightAction((int)_directions[4].x, (int)_directions[4].y, numTiles, validators);
         internal ActionHelper<TCard, TPiece> Direction5(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_directions[5].x, (int)_directions[5].y, numTiles, validators);
+
+        internal ActionHelper<TCard, TPiece> TargettedDirection0(int numTiles = int.MaxValue, params Validator[] validators)
+        => TargetedStraightAction((int)_directions[0].x, (int)_directions[0].y, numTiles, validators);
+        internal ActionHelper<TCard, TPiece> TargettedDirection1(int numTiles = int.MaxValue, params Validator[] validators)
+         => TargetedStraightAction((int)_directions[1].x, (int)_directions[1].y, numTiles, validators);
+        internal ActionHelper<TCard, TPiece> TargettedDirection2(int numTiles = int.MaxValue, params Validator[] validators)
+         => TargetedStraightAction((int)_directions[2].x, (int)_directions[2].y, numTiles, validators);
+        internal ActionHelper<TCard, TPiece> TargettedDirection3(int numTiles = int.MaxValue, params Validator[] validators)
+         => TargetedStraightAction((int)_directions[3].x, (int)_directions[3].y, numTiles, validators);
+        internal ActionHelper<TCard, TPiece> TargettedDirection4(int numTiles = int.MaxValue, params Validator[] validators)
+         => TargetedStraightAction((int)_directions[4].x, (int)_directions[4].y, numTiles, validators);
+        internal ActionHelper<TCard, TPiece> TargettedDirection5(int numTiles = int.MaxValue, params Validator[] validators)
+         => TargetedStraightAction((int)_directions[5].x, (int)_directions[5].y, numTiles, validators);
 
         internal ActionHelper<TCard, TPiece> DiagonalDirection0(int numTiles = int.MaxValue, params Validator[] validators)
         => StraightAction((int)_diagonalDirections[0].x, (int)_diagonalDirections[0].y, numTiles, validators);

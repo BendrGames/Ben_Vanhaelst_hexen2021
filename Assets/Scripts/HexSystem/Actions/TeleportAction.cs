@@ -9,30 +9,44 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem.Actions
 {
+
     class TeleportAction<TCard, TPiece> : ActionBase<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
+        public bool DisplayFullSelection;
         public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
-            return base.CanExecute(board, grid, position, piece, card);
+            //if (TotalValidPositions(board, grid, position, piece, card).Contains(position))
+            //{
+            //    DisplayFullSelection = true;
+            //    return true;
+            //}
+
+            //else
+            //{
+            //    DisplayFullSelection = false;
+            //    return true;
+            //}
+
+            if (board.TryGetPieceAt(position, out var toPiece))
+                return false;
+
+            else return true;
         }
 
         public override void ExecuteAction(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
-        {          
+        {
+
             board.Move(piece, position);
         }
 
-        public override List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        public override List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
             ActionHelper<TCard, TPiece> actionHelper = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
-            actionHelper.Direction0(10)
-                        .Direction1(10)
-                        .Direction2(10)
-                        .Direction3(10)
-                        .Direction4(10)
-                        .Direction5(10);
-
+            actionHelper.SelectSIngle();
 
             return actionHelper.Collect();
+
+
         }
     }
 }

@@ -10,13 +10,16 @@ namespace DAE.HexSystem
     interface ICheckPosition<TCard, TPiece> where TPiece : IPiece where TCard : ICard
 
     {
+        
         bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
 
         void ExecuteAction(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
 
         //void ExecuteAttack(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
 
-        List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
+        List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
+
+
 
         //bool CanExecute(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
 

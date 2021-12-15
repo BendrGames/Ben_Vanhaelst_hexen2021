@@ -60,7 +60,7 @@ namespace DAE.HexSystem
         {
             return _actions[cardType]
                 .Where(m => m.CanExecute(_board, _grid, position, piece, cardType))
-                .SelectMany(m => m.Positions(_board, _grid, position, piece, cardType)/*.Contains(position)*/)
+                .SelectMany(m => m.TotalValidPositions(_board, _grid, position, piece, cardType)/*.Contains(position)*/)
                 .ToList();
         }
 
@@ -68,7 +68,7 @@ namespace DAE.HexSystem
         {
             _actions[cardType]
             .Where(m => m.CanExecute(_board, _grid, position, piece, cardType))
-            .First(m => m.Positions(_board, _grid, position, piece, cardType).Contains(position))
+            .First(m => m.TotalValidPositions(_board, _grid, position, piece, cardType).Contains(position))
             .ExecuteAction(_board, _grid, position, piece, cardType);
         }
 

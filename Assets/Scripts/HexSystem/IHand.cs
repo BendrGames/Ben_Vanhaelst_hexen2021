@@ -12,7 +12,7 @@ namespace DAE.HexSystem
         public int Handsize { get; }
 
         public List<TCard> PlayerHandCardList { get; }
-        public void Drawcard();
+        public TCard Drawcard();
         public List<TCard> DiscardCard();
         public void PlayCard();
 
