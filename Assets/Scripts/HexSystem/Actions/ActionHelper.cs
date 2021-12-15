@@ -4,9 +4,9 @@ using UnityEngine;
 using System.Linq;
 using DAE.BoardSystem;
 
-namespace DAE.HexSystem.Moves
+namespace DAE.HexSystem.Actions
 {
-    class ActionHelper<TPiece> where TPiece : IPiece
+    class ActionHelper<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
         //private Board<Position, ICard> _board;
         //private Grid<Position> _grid;
@@ -24,51 +24,24 @@ namespace DAE.HexSystem.Moves
         private Board<Position, TPiece> _board;
         private Grid<Position> _grid;
         private TPiece _piece;
+        private Position _position;
+        private CardType _card;
 
         private List<Position> _validPositions = new List<Position>();
 
-        public ActionHelper(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece)
+        public ActionHelper(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
             _board = board;
             this._piece = piece;
             this._grid = grid;
+            _position = position;
+            this._card = card;
         }
       
         //public delegate bool Validator(Board<Position, ICard> board, Grid<Position> grid, ICard piece, Position position);
         
         public delegate bool Validator(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
-
-
-        //public ActionHelper<TPiece ReturnAllAction(int xCenter, int yCenter, int numTiles = int.MaxValue, params Validator[] validators)
-        //{
-        //    // Do the rangecheck thing, add all to list that dont have a piece.
-
-        //    //for each - N ≤ q ≤ +N:
-        //    //for each max(-N, -q - N) ≤ r ≤ min(+N, -q + N):
-        //    //results.append(axial_add(center, Hex(q, r)))
-
-        //    //for (int i = xCenter; -numTiles<= i <= numTiles; i++)
-        //    //{
-
-        //    //}
-
-
-        //    //for (int dx = -range; dx <= range; dx++)
-        //    //{
-        //    //    for (int dy = Mathf.Max(-range, -dx - range); dy <= Mathf.Min(range, -dx + range); dy++)
-        //    //    {
-        //    //        o = new CubeIndex(dx, dy, -dx - dy) + center.index;
-        //    //        if (grid.ContainsKey(o.ToString()))
-        //    //            ret.Add(grid[o.ToString()]);
-        //    //    }
-        //    //}
-
-        //    var nextXCoordinate = 0;
-        //    var nextYCoordinate = 0;
-        //    var nextposition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out var nextPosition);
-
-        //    return this;
-        //}
+               
 
         public static bool IsEmptyTile(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position)
         {
@@ -80,8 +53,7 @@ namespace DAE.HexSystem.Moves
             return board.TryGetPieceAt(position, out var enemyPiece) && enemyPiece.PlayerID != piece.PlayerID;
         }
 
-        //still something buggy in here, goes to infinity, and doesnt add multiple tiles
-        public ActionHelper<TPiece> StraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
+        public ActionHelper<TCard, TPiece> StraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
         {
             if (!_board.TryGetPositionOf(_piece, out var position))
                 return this;
@@ -118,7 +90,7 @@ namespace DAE.HexSystem.Moves
                 }
 
                 nextXCoordinate = coordinate.x + ((step + 1) * xOffset);
-                nextYCoordinate = coordinate.y + ((step + 1) * yOffset);
+                nextYCoordinate = coordinate.y + ((step + 1)* yOffset);
 
                 hasNextPosition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out nextPosition);
 
@@ -126,56 +98,33 @@ namespace DAE.HexSystem.Moves
             }
 
             return this;
-        }
+        }    
 
 
-
-        //internal ActionHelper North(int numTiles = int.MaxValue, params Validator[] validators)
-        //   => Move(0, 1, numTiles, validators);
-
-        //internal ActionHelper North(int numTiles = int.MaxValue, params Validator[] validators)
-        //   => Move(0, 1, numTiles, validators);
-        //internal ActionHelper NorthEast(int numTiles = int.MaxValue, params Validator[] validators)
-        //    => Move(1, 1, numTiles, validators);
-        //internal ActionHelper East(int numTiles = int.MaxValue, params Validator[] validators)
-        //    => Move(1, 0, numTiles, validators);
-        //internal ActionHelper SouthEast(int numTiles = int.MaxValue, params Validator[] validators)
-        //    => Move(1, -1, numTiles, validators);
-        //internal ActionHelper South(int numTiles = int.MaxValue, params Validator[] validators)
-        //    => Move(0, -1, numTiles, validators);
-        //internal ActionHelper SouthWest(int numTiles = int.MaxValue, params Validator[] validators)
-        //    => Move(-1, -1, numTiles, validators);
-        //internal ActionHelper West(int numTiles = int.MaxValue, params Validator[] validators)
-        //    => Move(-1, 0, numTiles, validators);
-        //internal ActionHelper NorthWest(int numTiles = int.MaxValue, params Validator[] validators)
-        //    => Move(-1, 1, numTiles, validators);
-
-        
-
-        internal ActionHelper<TPiece> Direction0(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> Direction0(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_directions[0].x, (int)_directions[0].y, numTiles, validators);
-        internal ActionHelper<TPiece> Direction1(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> Direction1(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_directions[1].x, (int)_directions[1].y, numTiles, validators);
-        internal ActionHelper<TPiece> Direction2(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> Direction2(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_directions[2].x, (int)_directions[2].y, numTiles, validators);
-        internal ActionHelper<TPiece> Direction3(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> Direction3(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_directions[3].x, (int)_directions[3].y, numTiles, validators);
-        internal ActionHelper<TPiece> Direction4(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> Direction4(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_directions[4].x, (int)_directions[4].y, numTiles, validators);
-        internal ActionHelper<TPiece> Direction5(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> Direction5(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_directions[5].x, (int)_directions[5].y, numTiles, validators);
 
-        internal ActionHelper<TPiece> DiagonalDirection0(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> DiagonalDirection0(int numTiles = int.MaxValue, params Validator[] validators)
         => StraightAction((int)_diagonalDirections[0].x, (int)_diagonalDirections[0].y, numTiles, validators);
-        internal ActionHelper<TPiece> DiagonalDirection1(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> DiagonalDirection1(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_diagonalDirections[1].x, (int)_diagonalDirections[1].y, numTiles, validators);
-        internal ActionHelper<TPiece> DiagonalDirection2(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> DiagonalDirection2(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_diagonalDirections[2].x, (int)_diagonalDirections[2].y, numTiles, validators);
-        internal ActionHelper<TPiece> DiagonalDirection3(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> DiagonalDirection3(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_diagonalDirections[3].x, (int)_diagonalDirections[3].y, numTiles, validators);
-        internal ActionHelper<TPiece> DiagonalDirection4(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> DiagonalDirection4(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_diagonalDirections[4].x, (int)_diagonalDirections[4].y, numTiles, validators);
-        internal ActionHelper<TPiece> DiagonalDirection5(int numTiles = int.MaxValue, params Validator[] validators)
+        internal ActionHelper<TCard, TPiece> DiagonalDirection5(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_diagonalDirections[5].x, (int)_diagonalDirections[5].y, numTiles, validators);
 
 

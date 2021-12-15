@@ -30,7 +30,7 @@ namespace DAE.Gamesystem
 
         public Deck _deckview;
         public PlayerHand _playerhand;
-        private ActionManager<Piece> _actionManager;
+        private ActionManager<Card, Piece> _actionManager;
 
         public Piece Player;
 
@@ -54,7 +54,7 @@ namespace DAE.Gamesystem
             ConnectPiece(_selectionmanagerPiece, _grid, _board);
             //InitializePieceSelection();
 
-            _actionManager = new ActionManager<Piece>(_board, _grid);
+            _actionManager = new ActionManager<Card,Piece>(_board, _grid);
 
             //_selectionmanagerTile = new SelectionManager<Tile>();
             //ConnectTile(_selectionmanagerTile, _grid, _board);
@@ -100,13 +100,11 @@ namespace DAE.Gamesystem
             var cards = FindObjectsOfType<Card>();
             foreach (var card in cards)
             {                
-
                 card.BeginDrag += (s, e) =>
                 {
                     CurrentCard = e.Card;                                       
                     
                     Debug.Log($"draggingEvent {CurrentCard}");
-
                 };                             
             }
         }
@@ -172,30 +170,24 @@ namespace DAE.Gamesystem
 
 
                 view.Dropped += (s, e) =>
-                {
-                    ////if (!_selectionmanagerPiece.HasSelection)
-                    ////    return;
-                    //var SelectedItem = _selectionmanagerPiece.SelectedItem;
-                    var validpositions = _actionManager.ValidPisitionsFor(Player, /*e.Position,*/ CurrentCard._cardType);
+                {                    
+                    var validpositions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);                                       
 
                     if (validpositions.Contains(e.Position))
                     {
-                        _actionManager.Move(Player, e.Position, CurrentCard._cardType);
+                        Debug.Log(CurrentCard._cardType);
+                        _actionManager.Action(Player, e.Position, CurrentCard._cardType);
                         foreach(var position in validpositions)
                         {
                             position.Deactivate();
-                        }
-                        
-
-                        //_selectionmanagerPiece.DeselectAll();
-                        //_selectionmanagerPiece.Toggle(s as Piece);
+                        }                                                                   
                     }
 
                 };
 
                 view.Entered += (s, e) =>
                 {
-                    var positions = _actionManager.ValidPisitionsFor(Player, /*e.Position,*/ CurrentCard._cardType);
+                    var positions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);
 
                     foreach (var position in positions)
                     {
@@ -205,7 +197,7 @@ namespace DAE.Gamesystem
 
                 view.Exitted += (s, e) =>
                 {
-                    var positions = _actionManager.ValidPisitionsFor(Player, /*e.Position,*/ CurrentCard._cardType);
+                    var positions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);
 
                     foreach (var position in positions)
                     {

@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace DAE.HexSystem
 {
-    interface ICheckPosition<TPiece> where TPiece : IPiece
-    
+    interface ICheckPosition<TCard, TPiece> where TPiece : IPiece where TCard : ICard
+
     {
-        bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece);
+        bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
 
-        void Execute(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
+        void ExecuteAction(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
 
-        List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece);
+        //void ExecuteAttack(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
+
+        List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
 
         //bool CanExecute(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
 

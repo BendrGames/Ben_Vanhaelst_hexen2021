@@ -5,12 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DAE.HexSystem.Moves
+namespace DAE.HexSystem.Actions
 {
-    class ConfigurableAction<TPiece> : ActionBase<TPiece> where TPiece : IPiece
+    class ConfigurableAction<TCard, TPiece> : ActionBase<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
-        public delegate List<Position> PositionCollector(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece);
-        //public delegate List<Position> PositionCollector(Board<Position, ICard> board, Grid<Position> grid, ICard piece);
+        public delegate List<Position> PositionCollector(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
+        
 
         private PositionCollector _positionCollector;
 
@@ -22,7 +22,10 @@ namespace DAE.HexSystem.Moves
         //public override List<Position> Positions(Board<Position, ICard> board, Grid<Position> grid, ICard piece)
         //    => _positionCollector(board, grid, piece);
 
-        public override List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece)
-           => _positionCollector(board, grid, piece);
+        
+
+        public override List<Position> Positions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        => _positionCollector(board, grid, position, piece, card);
+        
     }
 }
