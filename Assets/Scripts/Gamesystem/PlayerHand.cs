@@ -85,7 +85,6 @@ namespace DAE.Gamesystem
             {
                 d.parentToReturnTo = this.transform;
             }
-
         }
 
     }

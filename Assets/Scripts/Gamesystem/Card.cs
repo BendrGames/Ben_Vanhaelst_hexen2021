@@ -112,7 +112,7 @@ namespace DAE.Gamesystem
 
         public void OnEndDrag(PointerEventData eventData)
         {
-            //Debug.Log("OnEndDrag");
+            Debug.Log("OnEndDrag");
             this.transform.SetParent(parentToReturnTo);
             this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
             GetComponent<CanvasGroup>().blocksRaycasts = true;

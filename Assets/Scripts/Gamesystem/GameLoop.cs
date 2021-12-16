@@ -194,14 +194,15 @@ namespace DAE.Gamesystem
 
                     if (validpositions.Contains(e.Position))
                     {
-                        Debug.Log(CurrentCard._cardType);
+                        //Debug.Log(CurrentCard._cardType);
+
                         _actionManager.Action(Player, e.Position, CurrentCard._cardType);
                         foreach(var position in validpositions)
                         {
                             position.Deactivate();
                         }
-                        _playerhand.Drawcard();
-                        
+
+                        DrawCard();
                     }
 
                 };
