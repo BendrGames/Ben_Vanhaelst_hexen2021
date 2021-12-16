@@ -17,7 +17,7 @@ namespace DAE.HexSystem
 
         //void ExecuteAttack(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
 
-        List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
+        List<Position> ValidPositionsCalc(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
 
 
 

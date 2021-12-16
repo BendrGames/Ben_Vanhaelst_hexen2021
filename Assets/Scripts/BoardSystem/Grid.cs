@@ -24,21 +24,7 @@ namespace DAE.BoardSystem
             => _positions.TryGetKey(position, out coordinate);
 
         public void Register(int x, int y, TPosition position)
-        {
-
-            //#if UNITY_EDITOR
-
-            //            if (x < 0 || x >= columns)
-            //            {
-            //                throw new ArgumentException(nameof(x));
-            //            }
-
-            //            if (y < 0 || y >= columns)
-            //            {
-            //                throw new ArgumentException(nameof(x));
-            //            }
-            //#endif
-
+        {           
             _positions.Add((x, y), position);
         }
     }

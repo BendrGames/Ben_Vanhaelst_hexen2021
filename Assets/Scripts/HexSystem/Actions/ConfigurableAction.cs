@@ -24,7 +24,7 @@ namespace DAE.HexSystem.Actions
 
         
 
-        public override List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        public override List<Position> ValidPositionsCalc(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         => _positionCollector(board, grid, position, piece, card);
         
     }

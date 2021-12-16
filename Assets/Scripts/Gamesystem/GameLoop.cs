@@ -188,6 +188,7 @@ namespace DAE.Gamesystem
                 view.Model = position;
 
 
+
                 view.Dropped += (s, e) =>
                 {                    
                     var validpositions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);                                       

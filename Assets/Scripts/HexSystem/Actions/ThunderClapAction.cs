@@ -16,7 +16,7 @@ namespace DAE.HexSystem.Actions
                 
         public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
-            if (TotalValidPositions(board, grid, position, piece, card).Contains(position))
+            if (ValidPositionsCalc(board, grid, position, piece, card).Contains(position))
             {
                 DisplayFullSelection = true;
                 return true;
@@ -31,7 +31,7 @@ namespace DAE.HexSystem.Actions
 
         public override void ExecuteAction(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
-            foreach (var hex in TotalValidPositions(board, grid, position, piece, card))
+            foreach (var hex in ValidPositionsCalc(board, grid, position, piece, card))
             {
                 if (board.TryGetPieceAt(hex, out var enemy))
                 {
@@ -40,7 +40,7 @@ namespace DAE.HexSystem.Actions
             }
         }
 
-        public override List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        public override List<Position> ValidPositionsCalc(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
 
             ActionHelper<TCard, TPiece> actionHelper = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
@@ -52,12 +52,13 @@ namespace DAE.HexSystem.Actions
                         .Direction5(1);
 
             ActionHelper<TCard, TPiece> actionHelperPartual = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
-            actionHelperPartual.TargettedDirection0(1)
-                        .TargettedDirection1(1)
-                        .TargettedDirection2(1)
-                        .TargettedDirection3(1)
-                        .TargettedDirection4(1)
-                        .TargettedDirection5(1);
+            actionHelperPartual.TargetedPlusSides(1)
+                        .TargetedPlusSides1(1)
+                        .TargetedPlusSides2(1)
+                        .TargetedPlusSides3(1)
+                        .TargetedPlusSides4(1)
+                        .TargetedPlusSides5(1);
+
 
             if (!DisplayFullSelection)
                 return actionHelper.Collect();

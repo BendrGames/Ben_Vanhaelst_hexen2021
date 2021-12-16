@@ -61,6 +61,8 @@ namespace DAE.Gamesystem
         {
             //Debug.Log($"OnBeginDrag {CardType}");
 
+            //gameObject.SetActive(false);
+
             placeholder = new GameObject();
             placeholder.transform.SetParent(this.transform.parent);
             LayoutElement le = placeholder.AddComponent<LayoutElement>();
@@ -113,6 +115,7 @@ namespace DAE.Gamesystem
         public void OnEndDrag(PointerEventData eventData)
         {
             Debug.Log("OnEndDrag");
+            //gameObject.SetActive(true);
             this.transform.SetParent(parentToReturnTo);
             this.transform.SetSiblingIndex(placeholder.transform.GetSiblingIndex());
             GetComponent<CanvasGroup>().blocksRaycasts = true;

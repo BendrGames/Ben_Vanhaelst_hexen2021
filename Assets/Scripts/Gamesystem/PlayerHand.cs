@@ -34,6 +34,7 @@ namespace DAE.Gamesystem
         {
             int randomnum = Random.Range(0, PlayerDeck.CurrentDeckList.Count);
             _playerHandCardList.Add(PlayerDeck.CurrentDeckList[randomnum]);
+            PlayerDeck.CurrentDeckList.RemoveAt(randomnum);
             var card = Instantiate(_playerHandCardList[_playerHandCardList.Count - 1], HandView.transform);
 
             return card;

@@ -39,7 +39,7 @@ namespace DAE.HexSystem.Actions
             board.Move(piece, position);
         }
 
-        public override List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        public override List<Position> ValidPositionsCalc(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
             ActionHelper<TCard, TPiece> actionHelper = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
             actionHelper.SelectSIngle();

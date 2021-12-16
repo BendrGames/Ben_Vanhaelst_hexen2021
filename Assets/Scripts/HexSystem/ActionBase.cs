@@ -22,7 +22,7 @@ namespace DAE.HexSystem
             board.Move(piece, position);
         }
 
-        public abstract List<Position> TotalValidPositions(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
+        public abstract List<Position> ValidPositionsCalc(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card);
 
      
 
