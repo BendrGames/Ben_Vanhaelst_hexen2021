@@ -33,6 +33,7 @@ namespace DAE.Gamesystem
         private ActionManager<Card, Piece> _actionManager;
 
         public Piece Player;
+        private Position _currentMousePosition;
 
         public Card CurrentCard;
 
@@ -116,19 +117,6 @@ namespace DAE.Gamesystem
         //    }
         //}
 
-        private void DrawCard()
-        {
-            var card = _playerhand.Drawcard();
-            card.BeginDrag += (s, e) =>
-            {
-                CurrentCard = e.Card;
-
-                Debug.Log($"draggingEvent {CurrentCard}");
-            };
-        }
-
-
-
 
         //private void InitializeTileSelection()
         //{
@@ -186,24 +174,26 @@ namespace DAE.Gamesystem
             {
                 var position = new Position();
                 view.Model = position;
-
-
+                
 
                 view.Dropped += (s, e) =>
                 {                    
                     var validpositions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);                                       
 
                     if (validpositions.Contains(e.Position))
-                    {
-                        //Debug.Log(CurrentCard._cardType);
-
-                        _actionManager.Action(Player, e.Position, CurrentCard._cardType);
-                        foreach(var position in validpositions)
-                        {
-                            position.Deactivate();
-                        }
+                    {                      
+                        _actionManager.Action(Player, e.Position, CurrentCard._cardType);                       
 
                         DrawCard();
+                    }
+                    else
+                    {
+                        //ReAddCard();
+                    }
+
+                    foreach (var position in validpositions)
+                    {
+                        position.Deactivate();
                     }
 
                 };
@@ -211,6 +201,9 @@ namespace DAE.Gamesystem
                 view.Entered += (s, e) =>
                 {
                     var positions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);
+
+                    _currentMousePosition = e.Position;
+                    Debug.Log(_currentMousePosition);
 
                     foreach (var position in positions)
                     {
@@ -229,8 +222,6 @@ namespace DAE.Gamesystem
                 };
 
 
-
-
                 var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, view.transform.position);
                 Debug.Log($"value of tile { view.name} is X: {x} and y: {y}");
 
@@ -240,6 +231,27 @@ namespace DAE.Gamesystem
             }
         }
 
+        private void ReAddCard()
+        {
+            var card = _playerhand.ReAddCard(CurrentCard);
+            card.BeginDrag += (s, e) =>
+            {
+                CurrentCard = e.Card;
+
+                Debug.Log($"draggingEvent {CurrentCard}");
+            };
+        }
+
+        private void DrawCard()
+        {
+            var card = _playerhand.Drawcard();
+            card.BeginDrag += (s, e) =>
+            {
+                CurrentCard = e.Card;
+
+                Debug.Log($"draggingEvent {CurrentCard}");
+            };
+        }
         private void ConnectPiece(SelectionManager<Piece> selectionmanager, Grid<Position> grid, Board<Position, Piece> board)
         {
             var pieces = FindObjectsOfType<Piece>();
@@ -249,36 +261,14 @@ namespace DAE.Gamesystem
                 if (grid.TryGetPositionAt(x, y, out var position))
                 {
                     Debug.Log("registered");
-
-                    
+                                       
 
                     board.Place(piece, position);
                 }
             }
         }
 
-        //private void ConnectTile(SelectionManager<Tile> selectionmanager, Grid<Tile> grid, Board<Tile, Piece> board)
-        //{
-        //    var Tiles = FindObjectsOfType<Tile>();
-        //    foreach (var found in Tiles)
-        //    {
-        //        Debug.Log("found");
-
-        //        var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, found.transform.position);
-        //        if (grid.TryGetPositionAt(x, y, out var tile))
-        //        {
-        //            Debug.Log("registered");
-        //            found.Clicked += (s, e) => selectionmanager.Toggle(s as Tile);
-        //        }
-
-
-        //        //if (grid.TryGetPositionAt(x, y, out var tile))
-        //        //{
-        //        //    tile.Clicked += (s, e) => selectionmanager.Toggle(s as Tile);
-        //        //    //board.Place(tile, tile);
-        //        //}
-        //    }
-        //}
+      
 
     }
 }

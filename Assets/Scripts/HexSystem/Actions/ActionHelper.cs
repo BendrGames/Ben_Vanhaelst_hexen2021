@@ -73,7 +73,7 @@ namespace DAE.HexSystem.Actions
             var hasNextPosition = _grid.TryGetPositionAt(nextXCoordinate, nextYCoordinate, out var nextPosition);
             int step = 0;
 
-            while (hasNextPosition && step < numTiles)
+            while (hasNextPosition && step <= numTiles)
             {
 
                 var isOk = validators.All((v) => v(_board, _grid, _piece, nextPosition));

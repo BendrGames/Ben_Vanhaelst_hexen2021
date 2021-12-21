@@ -45,12 +45,12 @@ namespace DAE.HexSystem.Actions
         public override List<Position> ValidPositionsCalc(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
             ActionHelper<TCard, TPiece> actionHelper = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
-            actionHelper.Direction0(10)
-                        .Direction1(10)
-                        .Direction2(10)
-                        .Direction3(10)
-                        .Direction4(10)
-                        .Direction5(10);
+            actionHelper.Direction0(2)
+                        .Direction1(2)
+                        .Direction2(2)
+                        .Direction3(2)
+                        .Direction4(2)
+                        .Direction5(2);
 
             ActionHelper<TCard, TPiece> actionHelperPartual = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
             actionHelperPartual.TargettedDirection0(10)

@@ -13,7 +13,7 @@ namespace DAE.Gamesystem
     {
         public Position Position { get; }
         
-
+        
         public PositionEventArgs(Position position)
         {
             Position = position;
@@ -66,11 +66,11 @@ namespace DAE.Gamesystem
             Debug.Log("OnPointerEnter");           
 
 
-            Card d = eventData.pointerDrag.GetComponent<Card>();
-            if (d != null)
-            {
-                d.placeholderParent = this.transform;
-            }
+            //Card d = eventData.pointerDrag.GetComponent<Card>();
+            //if (d != null)
+            //{
+            //    d.placeholderParent = this.transform;
+            //}
 
             OnEntered(new PositionEventArgs(Model));
 
@@ -85,11 +85,11 @@ namespace DAE.Gamesystem
 
 
 
-            Card d = eventData.pointerDrag.GetComponent<Card>();
-            if (d != null && d.placeholderParent == this.transform)
-            {
-                d.placeholderParent = d.parentToReturnTo;
-            }
+            //Card d = eventData.pointerDrag.GetComponent<Card>();
+            //if (d != null && d.placeholderParent == this.transform)
+            //{
+            //    d.placeholderParent = d.parentToReturnTo;
+            //}
 
             OnExited(new PositionEventArgs(Model));
             //highlight tiles  b goep
@@ -101,11 +101,12 @@ namespace DAE.Gamesystem
             Card d = eventData.pointerDrag.GetComponent<Card>();
             if (d != null)
             {
-                d.parentToReturnTo = this.transform;
+                d.parentToReturnTo = d.parentToReturnTo;
             }
 
             OnDropped(new PositionEventArgs(Model));
-            Destroy(eventData.pointerDrag.gameObject);
+
+            //Destroy(eventData.pointerDrag.gameObject);
 
 
         }
