@@ -123,6 +123,12 @@ namespace DAE.Gamesystem
             Destroy(placeholder);
         }
 
+        public void Used()
+        {
+            Destroy(this.gameObject);
+            Destroy(placeholder);
+        }
+
         public void OnPointerClick(PointerEventData eventData)
         {
             //zoom in on card

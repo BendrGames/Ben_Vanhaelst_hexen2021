@@ -1,6 +1,7 @@
 ﻿using DAE.BoardSystem;
 using DAE.HexSystem;
 using DAE.HexSystem.Actions;
+using DAE.ReplaySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,8 +13,12 @@ namespace DAE.HexSystem.Actions
 
     class ThunderClapAction<TCard, TPiece> : ActionBase<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
-    public bool DisplayFullSelection;
-                
+        public bool DisplayFullSelection;
+
+        public ThunderClapAction(ReplayManager replayManager) : base(replayManager)
+        {
+        }
+
         public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
             if (ValidPositionsCalc(board, grid, position, piece, card).Contains(position))

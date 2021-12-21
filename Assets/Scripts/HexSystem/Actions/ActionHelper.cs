@@ -223,6 +223,7 @@ namespace DAE.HexSystem.Actions
             return this;
         }
 
+
         internal ActionHelper<TCard, TPiece> TargetedPlusSides(int numTiles = int.MaxValue, params Validator[] validators)
         => TargetedPlusSides((int)_directions[0].x, (int)_directions[0].y, 0, numTiles, validators);
         internal ActionHelper<TCard, TPiece> TargetedPlusSides1(int numTiles = int.MaxValue, params Validator[] validators)
@@ -292,7 +293,6 @@ namespace DAE.HexSystem.Actions
             }
             else return _directions[currentDirection - 1];
         }
-
         public Vector2 GetNextDirectionUp(int currentDirection)
         {
 

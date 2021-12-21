@@ -2,7 +2,8 @@
     "name": "HexSystem",
     "rootNamespace": "",
     "references": [
-        "GUID:8ff62e96e7ad7c3488c009c1e7cd200c"
+        "GUID:8ff62e96e7ad7c3488c009c1e7cd200c",
+        "GUID:634ab6b670a734641b43483138073bf6"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

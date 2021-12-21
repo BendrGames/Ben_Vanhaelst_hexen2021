@@ -1,4 +1,5 @@
 ﻿using DAE.BoardSystem;
+using DAE.ReplaySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +15,7 @@ namespace DAE.HexSystem.Actions
 
         private PositionCollector _positionCollector;
 
-        public ConfigurableAction(PositionCollector positionCollector)
+        public ConfigurableAction(ReplayManager replayManager, PositionCollector positionCollector) : base(replayManager)
         {
             _positionCollector = positionCollector;
         }

@@ -8,6 +8,9 @@ using System.Text;
 using System.Threading.Tasks;
 using UnityEngine;
 using DAE.HexSystem;
+using DAE.StateSystem;
+using DAE.GameSystem.GameStates;
+using DAE.ReplaySystem;
 //using DAE.HexSystem.Cards;
 //using DAE.HexSystem;
 
@@ -22,9 +25,7 @@ namespace DAE.Gamesystem
 
         [SerializeField]
         private Transform _boardParent;
-
-        private SelectionManager<Piece> _selectionmanagerPiece;
-        //private SelectionManager<Tile> _selectionmanagerTile;
+               
         private Grid<Position> _grid;
         private Board<Position, Piece> _board;
 
@@ -33,52 +34,42 @@ namespace DAE.Gamesystem
         private ActionManager<Card, Piece> _actionManager;
 
         public Piece Player;
-        private Position _currentMousePosition;
-
+       
         public Card CurrentCard;
 
+        private StateMachine<GameStateBase> _gameStateMachine;
+
+        
         //[SerializeField]
         //private DeckObject _mydeckObject;
 
         public void Start()
         {
-
-            _playerhand.InitializePlayerHand(_deckview, 5);
-            DrawCard();
-            DrawCard();
-            DrawCard();
-            DrawCard();
-            DrawCard();
-            //InitializeHand();
-
-
-
             _grid = new Grid<Position>(3, 3);
             ConnectGrid(_grid);
-            _board = new Board<Position, Piece>();
+            _board = new Board<Position, Piece>();           
+            ConnectPiece(_grid, _board);         
+            
+            var replayManager = new ReplayManager();
+
+            _actionManager = new ActionManager<Card,Piece>(_board, _grid, replayManager);
 
 
-            //_selectionmanagerPiece = new SelectionManager<Piece>();
-            ConnectPiece(_selectionmanagerPiece, _grid, _board);
-            //InitializePieceSelection();
+            _gameStateMachine = new StateMachine<GameStateBase>();
+            _gameStateMachine.Register(GameState.GamePlayState, new GamePlayState(_gameStateMachine, _board, _actionManager, _playerhand, _deckview));
+            _gameStateMachine.Register(GameState.ReplayState, new ReplayState(_gameStateMachine, replayManager));
+            
+            _gameStateMachine.InitialState = GameState.GamePlayState;
 
-            _actionManager = new ActionManager<Card,Piece>(_board, _grid);
-
-            //_selectionmanagerTile = new SelectionManager<Tile>();
-            //ConnectTile(_selectionmanagerTile, _grid, _board);
-            //InitializeTileSelection();
 
             _board.moved += (s, e) =>
-            {
-                //_movemanager.ValidPisitionsFor(e.Piece);
-
+            {             
                 if (_grid.TryGetCoordinateOf(e.ToPosition, out var toCoordinate))
                 {
                     var worldPosition = _positionHelper.ToWorldPosition(_grid, _boardParent, toCoordinate.x, toCoordinate.y);
 
                     e.Piece.MoveTo(worldPosition);
                 }
-
             };
 
             _board.placed += (s, e) =>
@@ -98,74 +89,7 @@ namespace DAE.Gamesystem
             {
                 e.Piece.Taken();
             };
-
-
-
-        }
-
-        //private void InitializeHand()
-        //{
-        //    var cards = FindObjectsOfType<Card>();
-        //    foreach (var card in cards)
-        //    {                
-        //        card.BeginDrag += (s, e) =>
-        //        {
-        //            CurrentCard = e.Card;                                       
-                    
-        //            Debug.Log($"draggingEvent {CurrentCard}");
-        //        };                             
-        //    }
-        //}
-
-
-        //private void InitializeTileSelection()
-        //{
-        //    _selectionmanagerTile.Selected += (s, e) =>
-        //    {
-        //        //if (_board.TryGetPieceAt(e.SelectableItem, out var piece))
-        //        //{
-        //        //    Debug.Log($"Piece {e.SelectableItem} on tile {piece.gameObject.name}");
-        //        //}
-        //        Debug.Log($"tile {e.SelectableItem.name}");
-
-        //        e.SelectableItem.Highlight = true;
-        //    };
-
-        //    _selectionmanagerTile.DeSelected += (s, e) =>
-        //    {
-        //        // dehighlight
-        //        e.SelectableItem.Highlight = false;
-        //    };
-        //}
-
-        //private void InitializePieceSelection()
-        //{
-        //    _selectionmanagerPiece.Selected += (s, e) =>
-        //    {
-        //        var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
-
-        //        foreach (var position in positions)
-        //        {
-        //            position.Activate();
-        //        }
-        //    };
-
-        //    _selectionmanagerPiece.DeSelected += (s, e) =>
-        //    {
-        //        var positions = _actionManager.ValidPisitionsFor(e.SelectableItem);
-
-        //        foreach (var position in positions)
-        //        {
-        //            position.Deactivate();
-        //        }
-        //    };
-        //}
-
-        public void DeselectAll()
-        {
-            _selectionmanagerPiece.DeselectAll();
-            //_selectionmanagerTile.DeselectAll();
-        }
+        }      
 
         private void ConnectGrid(Grid<Position> grid)
         {
@@ -174,54 +98,12 @@ namespace DAE.Gamesystem
             {
                 var position = new Position();
                 view.Model = position;
+
+                view.Dropped += (s, e) => _gameStateMachine.CurrentState.OnDrop(Player, position);
+                view.Entered += (s, e) => _gameStateMachine.CurrentState.HighLightNew(Player, position);
+                view.Exitted += (s, e) => _gameStateMachine.CurrentState.UnHighlightOld(Player, position);
+
                 
-
-                view.Dropped += (s, e) =>
-                {                    
-                    var validpositions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);                                       
-
-                    if (validpositions.Contains(e.Position))
-                    {                      
-                        _actionManager.Action(Player, e.Position, CurrentCard._cardType);                       
-
-                        DrawCard();
-                    }
-                    else
-                    {
-                        //ReAddCard();
-                    }
-
-                    foreach (var position in validpositions)
-                    {
-                        position.Deactivate();
-                    }
-
-                };
-
-                view.Entered += (s, e) =>
-                {
-                    var positions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);
-
-                    _currentMousePosition = e.Position;
-                    Debug.Log(_currentMousePosition);
-
-                    foreach (var position in positions)
-                    {
-                        position.Activate();
-                    }
-                };
-
-                view.Exitted += (s, e) =>
-                {
-                    var positions = _actionManager.ValidPisitionsFor(Player, e.Position, CurrentCard._cardType);
-
-                    foreach (var position in positions)
-                    {
-                        position.Deactivate();
-                    }
-                };
-
-
                 var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, view.transform.position);
                 Debug.Log($"value of tile { view.name} is X: {x} and y: {y}");
 
@@ -230,29 +112,7 @@ namespace DAE.Gamesystem
                 view.gameObject.name = $"tile {x},{y}";
             }
         }
-
-        private void ReAddCard()
-        {
-            var card = _playerhand.ReAddCard(CurrentCard);
-            card.BeginDrag += (s, e) =>
-            {
-                CurrentCard = e.Card;
-
-                Debug.Log($"draggingEvent {CurrentCard}");
-            };
-        }
-
-        private void DrawCard()
-        {
-            var card = _playerhand.Drawcard();
-            card.BeginDrag += (s, e) =>
-            {
-                CurrentCard = e.Card;
-
-                Debug.Log($"draggingEvent {CurrentCard}");
-            };
-        }
-        private void ConnectPiece(SelectionManager<Piece> selectionmanager, Grid<Position> grid, Board<Position, Piece> board)
+        private void ConnectPiece(Grid<Position> grid, Board<Position, Piece> board)
         {
             var pieces = FindObjectsOfType<Piece>();
             foreach (var piece in pieces)
@@ -260,13 +120,19 @@ namespace DAE.Gamesystem
                 var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, piece.transform.position);
                 if (grid.TryGetPositionAt(x, y, out var position))
                 {
-                    Debug.Log("registered");
-                                       
+                    Debug.Log("registered");                                      
 
                     board.Place(piece, position);
                 }
             }
         }
+
+        public void Forward()
+                 => _gameStateMachine.CurrentState.Forward();
+        public void Backward()
+                 => _gameStateMachine.CurrentState.Backward();
+
+
 
       
 

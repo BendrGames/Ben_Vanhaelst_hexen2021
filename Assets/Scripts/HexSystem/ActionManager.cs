@@ -6,6 +6,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using DAE.ReplaySystem;
 
 namespace DAE.HexSystem
 {
@@ -15,8 +16,8 @@ namespace DAE.HexSystem
         private MultiValueDictionary<CardType, ICheckPosition<TCard, TPiece>> _actions = new MultiValueDictionary<CardType, ICheckPosition<TCard, TPiece>>();
         private readonly Board<Position, TPiece> _board;
         private readonly Grid<Position> _grid;
-
-        public ActionManager(Board<Position, TPiece> board, Grid<Position> grid)
+        private readonly ReplayManager _replayManager;
+        public ActionManager(Board<Position, TPiece> board, Grid<Position> grid, ReplayManager replayManager)
         {
             //cardtype?
             _board = board;
@@ -30,13 +31,13 @@ namespace DAE.HexSystem
         private void InitializeMoves()
         {
             
-            _actions.Add(CardType.Beam, new LaserBeamAction<TCard, TPiece>());
+            _actions.Add(CardType.Beam, new LaserBeamAction<TCard, TPiece>(_replayManager));
 
-            _actions.Add(CardType.Thunderclap, new ThunderClapAction<TCard, TPiece>());
+            _actions.Add(CardType.Thunderclap, new ThunderClapAction<TCard, TPiece>(_replayManager));
 
-            _actions.Add(CardType.Teleport, new TeleportAction<TCard, TPiece>());
+            _actions.Add(CardType.Teleport, new TeleportAction<TCard, TPiece>(_replayManager));
 
-            _actions.Add(CardType.Cleave, new CleaveAction<TCard, TPiece>());           
+            _actions.Add(CardType.Cleave, new CleaveAction<TCard, TPiece>(_replayManager));           
 
 
             //_actions.Add(CardType.Cleave, new ConfigurableAction<TCard, TPiece>((b, g, pos, p, c)

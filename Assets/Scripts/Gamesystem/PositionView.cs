@@ -99,10 +99,10 @@ namespace DAE.Gamesystem
         {
             Debug.Log(eventData.pointerDrag.name + " was dropped on " + gameObject.name);
             Card d = eventData.pointerDrag.GetComponent<Card>();
-            if (d != null)
-            {
-                d.parentToReturnTo = d.parentToReturnTo;
-            }
+            //if (d != null)
+            //{
+            //    d.parentToReturnTo = d.parentToReturnTo;
+            //}
 
             OnDropped(new PositionEventArgs(Model));
 

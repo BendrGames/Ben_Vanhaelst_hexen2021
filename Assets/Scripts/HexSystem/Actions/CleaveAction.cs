@@ -1,6 +1,7 @@
 ﻿using DAE.BoardSystem;
 using DAE.HexSystem;
 using DAE.HexSystem.Actions;
+using DAE.ReplaySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,11 @@ namespace DAE.HexSystem.Actions
 
     class CleaveAction<TCard, TPiece> : ActionBase<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
-        
+
+        public CleaveAction(ReplayManager replayManager) : base(replayManager)
+        {
+        }
+
         public bool DisplayFullSelection;
 
         public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
@@ -58,10 +63,8 @@ namespace DAE.HexSystem.Actions
                     
                     if (!board.TryGetPieceAt(enemyNextPosition, out var pieceInTheWay))
                     {
-
                         board.Take(enemy);
-                        board.Place(enemy, enemyNextPosition);
-                       
+                        board.Place(enemy, enemyNextPosition);                       
                     }
                     else
                     {

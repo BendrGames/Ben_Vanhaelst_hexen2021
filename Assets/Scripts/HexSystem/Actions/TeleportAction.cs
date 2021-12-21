@@ -1,6 +1,7 @@
 ﻿using DAE.BoardSystem;
 using DAE.HexSystem;
 using DAE.HexSystem.Actions;
+using DAE.ReplaySystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,20 +14,13 @@ namespace DAE.HexSystem.Actions
     class TeleportAction<TCard, TPiece> : ActionBase<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
         public bool DisplayFullSelection;
-        public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+
+        public TeleportAction(ReplayManager replayManager) : base(replayManager)
         {
-            //if (TotalValidPositions(board, grid, position, piece, card).Contains(position))
-            //{
-            //    DisplayFullSelection = true;
-            //    return true;
-            //}
+        }
 
-            //else
-            //{
-            //    DisplayFullSelection = false;
-            //    return true;
-            //}
-
+        public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        {          
             if (board.TryGetPieceAt(position, out var toPiece))
                 return false;
 
@@ -35,7 +29,6 @@ namespace DAE.HexSystem.Actions
 
         public override void ExecuteAction(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
         {
-
             board.Move(piece, position);
         }
 

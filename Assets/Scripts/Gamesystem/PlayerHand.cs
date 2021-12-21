@@ -38,17 +38,8 @@ namespace DAE.Gamesystem
             var card = Instantiate(_playerHandCardList[_playerHandCardList.Count - 1], HandView.transform);
 
             return card;
-
         }
-
-        public Card ReAddCard(Card currentcard)
-        {
-            //Card ToInstant = PlayerDeck.CardList.Contains(currentcard);
-            _playerHandCardList.Add(PlayerDeck.CardList[0]);
-            var card = Instantiate(PlayerDeck.CardList[0], HandView.transform);
-            return card;
-
-        }
+       
 
         public void PlayCard()
         {
@@ -97,5 +88,9 @@ namespace DAE.Gamesystem
             }
         }
 
+        internal void DestroyCard(Card _currentCard)
+        {
+            Destroy(_currentCard);
+        }
     }
 }
