@@ -4,52 +4,109 @@ using UnityEngine;
 using DAE.HexSystem;
 using System.Linq;
 
+using System;
+using Random = UnityEngine.Random;
 
 namespace DAE.Gamesystem
 {
-    public class Deck : MonoBehaviour, IDeck<Card>
+    
+
+    public class Deck : MonoBehaviour, IDeck<CardData>
     {
         [SerializeField]
-        private int _decksize;
+        private List<CardData> _currentDeckList;
+
         [SerializeField]
-        private List<Card> _currentDeckList;
+        private List<CardData> _startingDeckList;
+        
+        private List<CardData> _temporaryCardList;
+
         [SerializeField]
-        private List<Card> _startingDeckList;
+        private List<CardData> _playerhandList;
+
         [SerializeField]
-        private List<Card> _cardList;
-      
+        private List<CardData> _discardList;
+
+        [SerializeField]
+        private GameObject CardBase;
+
+        public GameObject HandView;
+
+        private List<CardData> templist = new List<CardData>();
+        private List<CardData> tempDrawnlist = new List<CardData>();
 
 
         //shuffle shit, generate new deck etc
-        public int DeckSize => _decksize;
-        public List<Card> CurrentDeckList => _currentDeckList;
-        public List<Card> StartingDecklist => _startingDeckList;
-        public List<Card> CardList => _cardList;
+        //public int DeckSize => _decksize;
+        public List<CardData> CurrentDeckList => _currentDeckList;
+        public List<CardData> StartingDecklist => _startingDeckList;      
 
-     
-        public void GenerateDeck()        {           
+        public List<CardData> TemporaryCardsList => _temporaryCardList;
 
-            List<Card> tempdeck = new List<Card>();
+        public List<CardData> PlayerHandList => _playerhandList;
 
-            for (int i = 0; i < DeckSize; i++)
-            {
-                var randomnum = Random.Range(0, _cardList.Count);
-                tempdeck.Add(_cardList[randomnum]);
-            }
+        public List<CardData> DiscardList => _discardList;
 
-            _currentDeckList = tempdeck;
-            _startingDeckList = tempdeck;           
+
+
+        public void DrawCard()
+        {
+            _playerhandList.Add(CurrentDeckList[0]);        
+            CurrentDeckList.RemoveAt(0);            
         }
 
-        public List<Card> ReShuffleDeck()
+        public void EqualizeDecks()        
+        {         
+            CurrentDeckList.AddRange(StartingDecklist);
+        }
+        public List<CardData> ShuffleCurrentDeck()
+        {
+            return _currentDeckList.OrderBy(x => Random.value).ToList();
+        }
+
+        //for prototype im working on
+        public List<CardData> ShuffleStartingDeck()
         {
             return _startingDeckList.OrderBy(x => Random.value).ToList();
         }
 
-        public List<Card> ShuffleDeck()
+        public void ExecuteCard(Card cardo)
         {
-            return _currentDeckList.OrderBy(x => Random.value).ToList();
+            _playerhandList.Remove(cardo.CardData);
+            _discardList.Add(cardo.CardData);
+            _playerhandList.Add(CurrentDeckList[0]);            
+            CurrentDeckList.RemoveAt(0);
+
+            cardo.Used();
+            ClearHandGO();
+            InstantiateHandGOs();        
+
         }
+
+        public void ClearHandGO()
+        {
+            int childs = HandView.transform.childCount;
+            for (int i = childs -1 ; i >= 0; i--)
+            {
+                Destroy(HandView.transform.GetChild(i).gameObject);
+            }
+                    
+        }
+
+        public void InstantiateHandGOs()
+        {
+            foreach (var handCard in _playerhandList)
+            {
+                var cardobject = Instantiate(CardBase, HandView.transform);                
+                cardobject.GetComponent<Card>().InitializeCard(handCard);
+            }
+
+        }
+
+      
+
     }
+
+
 }
 

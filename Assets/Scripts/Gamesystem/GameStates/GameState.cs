@@ -8,7 +8,6 @@ namespace DAE.GameSystem.GameStates
 {
     public static class GameState
     {
-        public const string GamePlayState = "gamePlayState";
-        public const string ReplayState = "replayState";
+        public const string GamePlayState = "gamePlayState";        
     }
 }

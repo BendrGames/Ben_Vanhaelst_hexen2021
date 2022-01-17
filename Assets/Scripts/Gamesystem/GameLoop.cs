@@ -1,6 +1,4 @@
-﻿using DAE.BoardSystem;
-using DAE.SelectionSystem;
-using DAE.CardSystem;
+using DAE.BoardSystem;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,63 +8,73 @@ using UnityEngine;
 using DAE.HexSystem;
 using DAE.StateSystem;
 using DAE.GameSystem.GameStates;
-using DAE.ReplaySystem;
-//using DAE.HexSystem.Cards;
-//using DAE.HexSystem;
 
 namespace DAE.Gamesystem
 {
-    //testcommit
-
-    class GameLoop : MonoBehaviour
+    public class GameLoop : MonoBehaviour
     {
         [SerializeField]
         private PositionHelper _positionHelper;
-
+        [SerializeField]
+        private GenerateBoard _generateboard;
         [SerializeField]
         private Transform _boardParent;
-               
-        private Grid<Position> _grid;
-        private Board<Position, Piece> _board;
+
+        [Header("GenerateBoard")]
+        public int Rows = 8;
+        public int Columns = 8;
+        public int Tileradius = 1;
+        public GameObject hex;
+        public GenerationShapes MapShape = GenerationShapes.Hexagon;
 
         public Deck _deckview;
         public PlayerHand _playerhand;
         private ActionManager<Card, Piece> _actionManager;
 
+        public Card _currentCard;
+
+        private Grid<IHex> _grid;
+        private Board<IHex, Piece> _board;
+
         public Piece Player;
-       
-        public Card CurrentCard;
 
         private StateMachine<GameStateBase> _gameStateMachine;
 
-        
-        //[SerializeField]
-        //private DeckObject _mydeckObject;
-
-        public void Start()
+        void Start()
         {
-            _grid = new Grid<Position>(3, 3);
+            _positionHelper.TileRadius = Tileradius;
+            _generateboard.GenerateBoardView(Rows, Columns, 1, MapShape, _positionHelper, hex, _boardParent);
+
+            _grid = new Grid<IHex>(Rows, Columns);
             ConnectGrid(_grid);
-            _board = new Board<Position, Piece>();           
-            ConnectPiece(_grid, _board);         
+            _board = new Board<IHex, Piece>();
+            ConnectPiece(_grid, _board);
+
+           
+            _actionManager = new ActionManager<Card, Piece>(_board, _grid);
             
-            var replayManager = new ReplayManager();
-
-            _actionManager = new ActionManager<Card,Piece>(_board, _grid, replayManager);
-
 
             _gameStateMachine = new StateMachine<GameStateBase>();
             _gameStateMachine.Register(GameState.GamePlayState, new GamePlayState(_gameStateMachine, _board, _actionManager, _playerhand, _deckview));
-            _gameStateMachine.Register(GameState.ReplayState, new ReplayState(_gameStateMachine, replayManager));
             
-            _gameStateMachine.InitialState = GameState.GamePlayState;
+
+            _gameStateMachine.InitialState = GameState.GamePlayState;                    
+
+            BoardListereners();
+        }
 
 
+
+     
+
+
+        private void BoardListereners()
+        {
             _board.moved += (s, e) =>
-            {             
+            {
                 if (_grid.TryGetCoordinateOf(e.ToPosition, out var toCoordinate))
                 {
-                    var worldPosition = _positionHelper.ToWorldPosition(_grid, _boardParent, toCoordinate.x, toCoordinate.y);
+                    var worldPosition = _positionHelper.ToWorldPosition(_boardParent, toCoordinate.x, toCoordinate.y);
 
                     e.Piece.MoveTo(worldPosition);
                 }
@@ -77,7 +85,7 @@ namespace DAE.Gamesystem
 
                 if (_grid.TryGetCoordinateOf(e.ToPosition, out var toCoordinate))
                 {
-                    var worldPosition = _positionHelper.ToWorldPosition(_grid, _boardParent, toCoordinate.x, toCoordinate.y);
+                    var worldPosition = _positionHelper.ToWorldPosition(_boardParent, toCoordinate.x, toCoordinate.y);
 
 
                     e.Piece.Place(worldPosition);
@@ -89,39 +97,35 @@ namespace DAE.Gamesystem
             {
                 e.Piece.Taken();
             };
-        }      
+        }
 
-        private void ConnectGrid(Grid<Position> grid)
+        private void ConnectGrid(Grid<IHex> grid)
         {
-            var views = FindObjectsOfType<PositionView>();
-            foreach (var view in views)
+            var hexes = FindObjectsOfType<Hex>();
+            foreach (var hex in hexes)
             {
-                var position = new Position();
-                view.Model = position;
 
-                view.Dropped += (s, e) => _gameStateMachine.CurrentState.OnDrop(Player, position);
-                view.Entered += (s, e) => _gameStateMachine.CurrentState.HighLightNew(Player, position);
-                view.Exitted += (s, e) => _gameStateMachine.CurrentState.UnHighlightOld(Player, position);
+                hex.Dropped += (s, e) => _gameStateMachine.CurrentState.OnDrop(Player, hex, e.Card);
+                hex.Entered += (s, e) => _gameStateMachine.CurrentState.HighLightNew(Player,hex, e.Card);
+                hex.Exitted += (s, e) => _gameStateMachine.CurrentState.UnHighlightOld(Player,hex, e.Card);               
 
-                
-                var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, view.transform.position);
-                Debug.Log($"value of tile { view.name} is X: {x} and y: {y}");
 
-                grid.Register(x, y, position);
+                var gridpos = _positionHelper.ToGridPosition(_boardParent, hex.transform.position);
 
-                view.gameObject.name = $"tile {x},{y}";
+                grid.Register((int)gridpos.x, (int)gridpos.y, hex);
+
+                hex.gameObject.name = $"tile {(int)gridpos.x},{(int)gridpos.y}";
             }
         }
-        private void ConnectPiece(Grid<Position> grid, Board<Position, Piece> board)
+
+        private void ConnectPiece(Grid<IHex> grid, Board<IHex, Piece> board)
         {
             var pieces = FindObjectsOfType<Piece>();
             foreach (var piece in pieces)
             {
-                var (x, y) = _positionHelper.ToGridPosition(_grid, _boardParent, piece.transform.position);
-                if (grid.TryGetPositionAt(x, y, out var position))
-                {
-                    Debug.Log("registered");                                      
-
+                var gridpos = _positionHelper.ToGridPosition(_boardParent, piece.transform.position);
+                if (grid.TryGetPositionAt((int)gridpos.x, (int)gridpos.y, out var position))
+                {                 
                     board.Place(piece, position);
                 }
             }
@@ -133,9 +137,6 @@ namespace DAE.Gamesystem
                  => _gameStateMachine.CurrentState.Backward();
 
 
-
-      
-
     }
-}
 
+}

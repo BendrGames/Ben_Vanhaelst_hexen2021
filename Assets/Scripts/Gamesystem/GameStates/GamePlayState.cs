@@ -1,7 +1,6 @@
 ﻿using DAE.BoardSystem;
 using DAE.Gamesystem;
 using DAE.HexSystem;
-using DAE.SelectionSystem;
 using DAE.StateSystem;
 using System;
 using System.Collections.Generic;
@@ -13,96 +12,84 @@ namespace DAE.GameSystem.GameStates
 {
     class GamePlayState : GameStateBase
     {
-        private SelectionManager<Piece> _selectionManager;
-        private ActionManager<Card,Piece> _actionManager;
-        private Board<Position, Piece> _board;
-        private PlayerHand _playerHand;
-        private Card _currentCard;
-        private Deck _deck;
-      
 
-        public GamePlayState(StateMachine<GameStateBase> stateMachine, Board<Position, Piece> board, ActionManager<Card,Piece> moveManager, PlayerHand playerhand, Deck deck) : base(stateMachine)
+        private ActionManager<Card, Piece> _actionManager;
+        private Board<IHex, Piece> _board;
+        private Deck _deck;
+
+        public GamePlayState(StateMachine<GameStateBase> stateMachine, Board<IHex, Piece> board, ActionManager<Card, Piece> moveManager, PlayerHand playerhand, Deck deck) : base(stateMachine)
         {
-            _playerHand = playerhand;
+
             _deck = deck;
             _actionManager = moveManager;
             _board = board;
 
-            _playerHand.InitializePlayerHand(_deck, 5);
-            DrawCard();
-            DrawCard();
-            DrawCard();
-            DrawCard();
-            DrawCard();
-
+            _deck.EqualizeDecks();
+            _deck.ShuffleCurrentDeck();
+            _deck.DrawCard();
+            _deck.DrawCard();
+            _deck.DrawCard();
+            _deck.DrawCard();
+            _deck.DrawCard();
+            _deck.InstantiateHandGOs();
         }
 
-        private void DrawCard()
+
+        internal override void HighLightNew(Piece piece, Hex position, Card card)
         {
-            var card = _playerHand.Drawcard();
-            card.BeginDrag += (s, e) =>
+            var validpositions = _actionManager.ValidPisitionsFor(piece, position, card._cardType);
+            var IsolatedPositions = _actionManager.IsolatedValidPisitionsFor(piece, position, card._cardType);
+
+            if (!validpositions.Contains(position))
             {
-                _currentCard = e.Card;                
+                foreach (var hex in validpositions)
+                {
+                    hex.Activate();
+                }
+            }
+
+            if (IsolatedPositions.Contains(position))
+            {
+                foreach (var hex in IsolatedPositions)
+                {
+                    hex.Activate();
+                }
             };
         }
 
-        public override void OnEnter()
+        internal override void UnHighlightOld(Piece piece, Hex position, Card card)
         {
-           
-        }
+            var validpositions = _actionManager.ValidPisitionsFor(piece, position, card._cardType);
+            var IsolatedPositions = _actionManager.IsolatedValidPisitionsFor(piece, position, card._cardType);
 
-        public override void OnExit()
-        {
-           
-        }
-
-        internal override void Backward()
-        {
-            StateMachine.MoveToState(GameState.ReplayState);
-        }
-
-        //internal override void BeginDrag(Card card)
-        //{
-        //    base.BeginDrag(card);
-        //}
-
-        internal override void HighLightNew(Piece piece, Position position)
-        {
-            var positions = _actionManager.ValidPisitionsFor(piece, position, _currentCard._cardType);
-            foreach (var pos in positions)
+            foreach (var hex in validpositions)
             {
-                pos.Activate();
+                hex.Deactivate();
+            }
+
+            foreach (var hex in IsolatedPositions)
+            {
+                position.Deactivate();
             }
         }
 
-        internal override void OnDrop(Piece player, Position position)
+        internal override void OnDrop(Piece piece, Hex position, Card card)
         {
-            var validpositions = _actionManager.ValidPisitionsFor(player, position, _currentCard._cardType);
+            var validpositions = _actionManager.ValidPisitionsFor(piece, position, card._cardType);
+            var IsolatedPositions = _actionManager.IsolatedValidPisitionsFor(piece, position, card._cardType);
 
-            if (validpositions.Contains(position))
+            if (IsolatedPositions.Contains(position))
             {
-                _actionManager.Action(player, position, _currentCard._cardType);                
-                DrawCard();
-                _currentCard.Used();
+                _actionManager.Action(piece, position, card._cardType);
+
+                _deck.ExecuteCard(card);
             }
 
-            foreach (var pos in validpositions)
+            foreach (var hex in validpositions)
             {
-                pos.Deactivate();
-            }
-
-            
-        }
-
-        internal override void UnHighlightOld(Piece piece, Position position)
-        {
-            var positions = _actionManager.ValidPisitionsFor(piece, position, _currentCard._cardType);
-            foreach (var pos in positions)
-            {
-                pos.Deactivate();
+                hex.Deactivate();
             }
         }
-      
-
     }
+
 }

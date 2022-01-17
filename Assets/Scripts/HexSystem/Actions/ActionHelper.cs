@@ -7,29 +7,17 @@ using DAE.BoardSystem;
 namespace DAE.HexSystem.Actions
 {
     class ActionHelper<TCard, TPiece> where TPiece : IPiece where TCard : ICard
-    {
-        //private Board<Position, ICard> _board;
-        //private Grid<Position> _grid;
-        //private ICard _piece;
+    {    
 
-        //private List<Position> _validPositions = new List<Position>();
-
-        //public ActionHelper(Board<Position, ICard> board, Grid<Position> grid, ICard piece)
-        //{
-        //    _board = board;
-        //    this._piece = piece;
-        //    this._grid = grid;
-        //}
-
-        private Board<Position, TPiece> _board;
-        private Grid<Position> _grid;
+        private Board<IHex, TPiece> _board;
+        private Grid<IHex> _grid;
         private TPiece _piece;
-        private Position _position;
+        private IHex _position;
         private CardType _card;
 
-        private List<Position> _validPositions = new List<Position>();
+        private List<IHex> _validPositions = new List<IHex>();
 
-        public ActionHelper(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        public ActionHelper(Board<IHex, TPiece> board, Grid<IHex> grid, IHex position, TPiece piece, CardType card)
         {
             _board = board;
             this._piece = piece;
@@ -38,26 +26,19 @@ namespace DAE.HexSystem.Actions
             this._card = card;
         }
 
-        //public delegate bool Validator(Board<Position, ICard> board, Grid<Position> grid, ICard piece, Position position);
+        
 
-        public delegate bool Validator(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position);
-
-
-        public static bool IsEmptyTile(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position)
+        public delegate bool Validator(Board<IHex, TPiece> board, Grid<IHex> grid, TPiece piece, IHex position);
+        public static bool IsEmptyTile(Board<IHex, TPiece> board, Grid<IHex> grid, TPiece piece, IHex position)
         {
             return !board.TryGetPieceAt(position, out _);
-        }
-
-        public static bool HasEnemyPiece(Board<Position, TPiece> board, Grid<Position> grid, TPiece piece, Position position)
-        {
-            return board.TryGetPieceAt(position, out var enemyPiece) && enemyPiece.PlayerID != piece.PlayerID;
-        }
-
+        }              
         public ActionHelper<TCard, TPiece> SelectSIngle(params Validator[] validators)
         {
             _validPositions.Add(_position);
             return this;
         }
+
 
         public ActionHelper<TCard, TPiece> StraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
         {
@@ -80,20 +61,8 @@ namespace DAE.HexSystem.Actions
                 if (!isOk)
                     return this;
 
-                //var hasPiece = _board.TryGetPieceAt(nextPosition, out var nextPiece);
-                //if (!hasPiece)
-                //{
-                _validPositions.Add(nextPosition);
-                //}
-                //else
-                //{
-                //    //detect other pieces shit
-                //    if (nextPiece.PlayerID == _piece.PlayerID)
-                //        return this;
-
-                //    _validPositions.Add(nextPosition);
-                //    return this;
-                //}
+           
+                _validPositions.Add(nextPosition);       
 
                 nextXCoordinate = coordinate.x + ((step + 1) * xOffset);
                 nextYCoordinate = coordinate.y + ((step + 1) * yOffset);
@@ -109,7 +78,7 @@ namespace DAE.HexSystem.Actions
         }
         public ActionHelper<TCard, TPiece> TargetedStraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
         {
-            List<Position> TempvalidPositions = new List<Position>();
+            List<IHex> TempvalidPositions = new List<IHex>();
 
             if (!_board.TryGetPositionOf(_piece, out var positionPlayer))
                 return this;
@@ -163,10 +132,9 @@ namespace DAE.HexSystem.Actions
 
             return this;
         }
-
         public ActionHelper<TCard, TPiece> TargetedPlusSides(int xOffset, int yOffset, int direction, int numTiles = int.MaxValue, params Validator[] validators)
         {
-            List<Position> TempvalidPositions = new List<Position>();
+            List<IHex> TempvalidPositions = new List<IHex>();
 
             if (!_board.TryGetPositionOf(_piece, out var positionPlayer))
                 return this;
@@ -223,9 +191,9 @@ namespace DAE.HexSystem.Actions
             return this;
         }
 
-
+        #region directionmethods
         internal ActionHelper<TCard, TPiece> TargetedPlusSides(int numTiles = int.MaxValue, params Validator[] validators)
-        => TargetedPlusSides((int)_directions[0].x, (int)_directions[0].y, 0, numTiles, validators);
+     => TargetedPlusSides((int)_directions[0].x, (int)_directions[0].y, 0, numTiles, validators);
         internal ActionHelper<TCard, TPiece> TargetedPlusSides1(int numTiles = int.MaxValue, params Validator[] validators)
          => TargetedPlusSides((int)_directions[1].x, (int)_directions[1].y, 1, numTiles, validators);
         internal ActionHelper<TCard, TPiece> TargetedPlusSides2(int numTiles = int.MaxValue, params Validator[] validators)
@@ -278,11 +246,7 @@ namespace DAE.HexSystem.Actions
         internal ActionHelper<TCard, TPiece> DiagonalDirection5(int numTiles = int.MaxValue, params Validator[] validators)
          => StraightAction((int)_diagonalDirections[5].x, (int)_diagonalDirections[5].y, numTiles, validators);
 
-        //public Vector2 GetNextDirectionForward(int currentDirection)
-        //{
-
-        //    return null;
-        //}
+        #endregion
 
         public Vector2 GetNextDirectionDown(int currentDirection)
         {
@@ -293,6 +257,7 @@ namespace DAE.HexSystem.Actions
             }
             else return _directions[currentDirection - 1];
         }
+
         public Vector2 GetNextDirectionUp(int currentDirection)
         {
 
@@ -358,7 +323,7 @@ namespace DAE.HexSystem.Actions
 
 
         #endregion
-        internal List<Position> Collect()
+        internal List<IHex> Collect()
         {
             return _validPositions;
         }

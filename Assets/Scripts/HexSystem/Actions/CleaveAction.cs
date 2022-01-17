@@ -1,46 +1,27 @@
 ﻿using DAE.BoardSystem;
 using DAE.HexSystem;
 using DAE.HexSystem.Actions;
-using DAE.ReplaySystem;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace DAE.HexSystem.Actions
 {
-
     class CleaveAction<TCard, TPiece> : ActionBase<TCard, TPiece> where TPiece : IPiece where TCard : ICard
     {
+            
 
-        public CleaveAction(ReplayManager replayManager) : base(replayManager)
+        public override void ExecuteAction(Board<IHex, TPiece> board, Grid<IHex> grid, IHex hex, TPiece piece, CardType card)
         {
-        }
-
-        public bool DisplayFullSelection;
-
-        public override bool CanExecute(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
-        {
-            if (ValidPositionsCalc(board, grid, position, piece, card).Contains(position))
+            foreach (var foundhex in IsolatedPositions(board, grid, hex, piece, card))
             {
-                DisplayFullSelection = true;
-                return true;
-            }
-            else
-            {
-                DisplayFullSelection = false;
-                return true;
-            }
-        }
-
-        public override void ExecuteAction(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
-        {
-            foreach (var hex in ValidPositionsCalc(board, grid, position, piece, card))
-            {
-                if (board.TryGetPieceAt(hex, out var enemy))
+                if (board.TryGetPieceAt(foundhex, out var enemy))
                 {
-                                       
+
                     board.TryGetPositionOf(piece, out var positionPlayer);
                     grid.TryGetCoordinateOf(positionPlayer, out var coordinate);
                     var playerX = coordinate.x;
@@ -56,33 +37,43 @@ namespace DAE.HexSystem.Actions
                     var nexPositionenemyX = directionX + enemyX;
                     var nexPositionenemyY = directionY + enemyY;
 
-                    if(!grid.TryGetPositionAt(nexPositionenemyX, nexPositionenemyY, out var enemyNextPosition))
-                    {
-                        board.Take(enemy);
-                    }
-                    
-                    if (!board.TryGetPieceAt(enemyNextPosition, out var pieceInTheWay))
-                    {
-                        board.Take(enemy);
-                        board.Place(enemy, enemyNextPosition);                       
+                    if (grid.TryGetPositionAt(nexPositionenemyX, nexPositionenemyY, out var enemyNextPosition))
+                    {                        
+
+                        if (!board.TryGetPieceAt(enemyNextPosition, out var pieceInTheWay))
+                        {
+                            board.Take(enemy);
+                            board.Place(enemy, enemyNextPosition);
+
+                        }
+                        else
+                        {
+                            board.Take(enemy);
+                            board.Place(enemy, foundhex);
+                        }
                     }
                     else
                     {
                         board.Take(enemy);
-                        board.Place(enemy, position);
-                    }
-                   
-
-
-                    //ActionHelper<TCard, TPiece> actionHelper = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
-                    //actionHelper.GetNextDirectionDown();
-
-                  
+                    }                    
                 }
             }
         }
 
-        public override List<Position> ValidPositionsCalc(Board<Position, TPiece> board, Grid<Position> grid, Position position, TPiece piece, CardType card)
+        public override List<IHex> IsolatedPositions(Board<IHex, TPiece> board, Grid<IHex> grid, IHex position, TPiece piece, CardType card)
+        {
+            ActionHelper<TCard, TPiece> actionHelperPartual = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
+            actionHelperPartual.TargetedPlusSides(1)
+                        .TargetedPlusSides1(1)
+                        .TargetedPlusSides2(1)
+                        .TargetedPlusSides3(1)
+                        .TargetedPlusSides4(1)
+                        .TargetedPlusSides5(1);
+
+            return actionHelperPartual.Collect();
+        }
+
+        public override List<IHex> Validpositions(Board<IHex, TPiece> board, Grid<IHex> grid, IHex position, TPiece piece, CardType card)
         {
             ActionHelper<TCard, TPiece> actionHelper = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
             actionHelper.Direction0(1)
@@ -92,21 +83,13 @@ namespace DAE.HexSystem.Actions
                         .Direction4(1)
                         .Direction5(1);
 
-            ActionHelper<TCard, TPiece> actionHelperPartual = new ActionHelper<TCard, TPiece>(board, grid, position, piece, card);
-            actionHelperPartual.TargetedPlusSides(1)
-                        .TargetedPlusSides1(1)
-                        .TargetedPlusSides2(1)
-                        .TargetedPlusSides3(1)
-                        .TargetedPlusSides4(1)
-                        .TargetedPlusSides5(1);
-
-
-            if (!DisplayFullSelection)
-                return actionHelper.Collect();
-
-            else
-                return actionHelperPartual.Collect();
+            return actionHelper.Collect();
 
         }
     }
+
+
+  
 }
+
+
