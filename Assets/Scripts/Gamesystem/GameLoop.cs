@@ -40,6 +40,9 @@ namespace DAE.Gamesystem
 
         private StateMachine<GameStateBase> _gameStateMachine;
 
+        public CanvasGroup StartScreen;
+        public CanvasGroup EndScreen;
+
         void Start()
         {
             _positionHelper.TileRadius = Tileradius;
@@ -50,15 +53,16 @@ namespace DAE.Gamesystem
             _board = new Board<IHex, Piece>();
             ConnectPiece(_grid, _board);
 
-           
+
             _actionManager = new ActionManager<Card, Piece>(_board, _grid);
-            
+
 
             _gameStateMachine = new StateMachine<GameStateBase>();
-            _gameStateMachine.Register(GameState.GamePlayState, new GamePlayState(_gameStateMachine, _board, _actionManager, _playerhand, _deckview));
-            
+            _gameStateMachine.Register(GameState.GamePlayState, new GamePlayState(_gameStateMachine, _board, _actionManager, _playerhand, _deckview, EndScreen));
+            _gameStateMachine.Register(GameState.StartScreenState, new StartScreenState(_gameStateMachine));
+            _gameStateMachine.Register(GameState.EndScreenState, new EndScreenState(_gameStateMachine));
 
-            _gameStateMachine.InitialState = GameState.GamePlayState;
+            _gameStateMachine.InitialState = GameState.StartScreenState;
 
             GridListeners();
             BoardListereners();
@@ -103,6 +107,11 @@ namespace DAE.Gamesystem
             _board.taken += (s, e) =>
             {
                 e.Piece.Taken();
+
+                if (e.Piece.PieceType == pieceType.player)
+                {
+                    _gameStateMachine.CurrentState.EndGame();
+                }
             };
         }
 
@@ -113,8 +122,8 @@ namespace DAE.Gamesystem
             {
 
                 hex.Dropped += (s, e) => _gameStateMachine.CurrentState.OnDrop(Player, hex, e.Card);
-                hex.Entered += (s, e) => _gameStateMachine.CurrentState.HighLightNew(Player,hex, e.Card);
-                hex.Exitted += (s, e) => _gameStateMachine.CurrentState.UnHighlightOld(Player,hex, e.Card);               
+                hex.Entered += (s, e) => _gameStateMachine.CurrentState.HighLightNew(Player, hex, e.Card);
+                hex.Exitted += (s, e) => _gameStateMachine.CurrentState.UnHighlightOld(Player, hex, e.Card);
 
 
                 var gridpos = _positionHelper.ToGridPosition(_boardParent, hex.transform.position);
@@ -132,16 +141,21 @@ namespace DAE.Gamesystem
             {
                 var gridpos = _positionHelper.ToGridPosition(_boardParent, piece.transform.position);
                 if (grid.TryGetPositionAt((int)gridpos.x, (int)gridpos.y, out var position))
-                {                 
+                {
                     board.Place(piece, position);
                 }
             }
         }
 
-        public void Forward()
-                 => _gameStateMachine.CurrentState.Forward();
-        public void Backward()
-                 => _gameStateMachine.CurrentState.Backward();
+        public void StartGame()
+        {
+            _gameStateMachine.CurrentState.StartGame();
+            StartScreen.alpha = 0;
+            StartScreen.blocksRaycasts = false;
+            StartScreen.interactable = false;
+
+        }
+
 
 
     }

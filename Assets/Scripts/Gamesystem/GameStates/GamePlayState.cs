@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using UnityEngine;
 
 namespace DAE.GameSystem.GameStates
 {
@@ -16,13 +17,15 @@ namespace DAE.GameSystem.GameStates
         private ActionManager<Card, Piece> _actionManager;
         private Board<IHex, Piece> _board;
         private Deck _deck;
+        private CanvasGroup _endScreen;
 
-        public GamePlayState(StateMachine<GameStateBase> stateMachine, Board<IHex, Piece> board, ActionManager<Card, Piece> moveManager, PlayerHand playerhand, Deck deck) : base(stateMachine)
+        public GamePlayState(StateMachine<GameStateBase> stateMachine, Board<IHex, Piece> board, ActionManager<Card, Piece> moveManager, PlayerHand playerhand, Deck deck, CanvasGroup endScreen) : base(stateMachine)
         {
 
             _deck = deck;
             _actionManager = moveManager;
             _board = board;
+            _endScreen = endScreen;
 
             _deck.EqualizeDecks();
             _deck.ShuffleCurrentDeck();
@@ -34,6 +37,12 @@ namespace DAE.GameSystem.GameStates
             _deck.InstantiateHandGOs();
         }
 
+        internal override void EndGame()
+        {
+            StateMachine.MoveToState(GameState.EndScreenState);
+            _endScreen.alpha = 1;
+            
+        }
 
         internal override void HighLightNew(Piece piece, Hex position, Card card)
         {
@@ -91,5 +100,7 @@ namespace DAE.GameSystem.GameStates
             }
         }
     }
+
+
 
 }

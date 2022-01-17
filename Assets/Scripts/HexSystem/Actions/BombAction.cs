@@ -23,6 +23,12 @@ namespace DAE.HexSystem.Actions
 
             grid.Destroy(destroylist);
 
+            board.TryGetPositionOf(piece, out var player);
+            if (destroylist.Contains(player))
+            {
+                board.Take(piece);
+            }
+
         }
 
         public override List<IHex> IsolatedPositions(Board<IHex, TPiece> board, Grid<IHex> grid, IHex position, TPiece piece, CardType card)

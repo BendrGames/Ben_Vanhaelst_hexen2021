@@ -8,6 +8,8 @@ namespace DAE.GameSystem.GameStates
 {
     public static class GameState
     {
-        public const string GamePlayState = "gamePlayState";        
+        public const string GamePlayState = "gamePlayState";
+        public const string StartScreenState = "startScreenState";
+        public const string EndScreenState = "endScreenState";
     }
 }

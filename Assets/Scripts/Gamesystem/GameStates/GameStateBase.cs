@@ -42,15 +42,17 @@ namespace DAE.GameSystem.GameStates
         }   
 
 
-        internal virtual void Forward()
+        internal virtual void StartGame()
         {
 
         }
 
-        internal virtual void Backward()
+        internal virtual void EndGame()
         {
 
         }
+
+
 
     }
 }

@@ -10,6 +10,10 @@ namespace DAE.Gamesystem
 {
     public class Piece : MonoBehaviour, IPiece
     {
+        [SerializeField]
+        private pieceType _pieceType;
+        public pieceType PieceType => _pieceType;
+
         public void MoveTo(Vector3 worldPosition)
         {
             transform.position = worldPosition;

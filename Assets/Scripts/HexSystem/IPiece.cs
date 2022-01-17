@@ -8,6 +8,12 @@ namespace DAE.HexSystem
 {
     public interface IPiece
     {
-       
+       public pieceType PieceType { get; }
+    }
+
+    public enum pieceType
+    {
+        player,
+        enemy
     }
 }
