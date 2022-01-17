@@ -58,15 +58,22 @@ namespace DAE.Gamesystem
             _gameStateMachine.Register(GameState.GamePlayState, new GamePlayState(_gameStateMachine, _board, _actionManager, _playerhand, _deckview));
             
 
-            _gameStateMachine.InitialState = GameState.GamePlayState;                    
+            _gameStateMachine.InitialState = GameState.GamePlayState;
 
+            GridListeners();
             BoardListereners();
         }
 
-
-
-     
-
+        private void GridListeners()
+        {
+            _grid.destroyed += (s, e) =>
+            {
+                foreach (var hex in e.DestroyList)
+                {
+                    hex.Destroy();
+                }
+            };
+        }
 
         private void BoardListereners()
         {

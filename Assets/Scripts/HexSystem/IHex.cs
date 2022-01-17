@@ -12,7 +12,9 @@ namespace DAE.HexSystem
         //public event EventHandler Deactivated;
 
         public void Activate();
-        public void Deactivate();     
+        public void Deactivate();
+
+        public void Destroy();
                      
     }
 }

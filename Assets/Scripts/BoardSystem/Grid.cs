@@ -7,6 +7,16 @@ using System.Threading.Tasks;
 
 namespace DAE.BoardSystem
 {
+    public class DestoyedEventArgs<THex> : EventArgs
+    {
+        public List<THex> DestroyList { get; }        
+
+        public DestoyedEventArgs(List<THex> destroyList)
+        {
+            DestroyList = destroyList;       
+        }
+    }
+
     public class Grid<THex>
     {
         public int rows { get; }
@@ -28,6 +38,32 @@ namespace DAE.BoardSystem
         public void Register(int x, int y, THex position)
         {
             _positions.Add((x, y), position);
+        }
+
+        public bool Destroy(List<THex> hexList)
+        {
+            foreach (var hex in hexList)
+            {
+                if (!_positions.Remove(hex))
+                {
+                    return false;
+                }                
+
+            }
+
+            OnDestroyed(new DestoyedEventArgs<THex>(hexList));
+            return true;
+        }
+
+
+        public event EventHandler<DestoyedEventArgs<THex>> destroyed;
+
+
+
+        protected virtual void OnDestroyed(DestoyedEventArgs<THex> eventargs)
+        {
+            var handlers = destroyed;
+            handlers?.Invoke(this, eventargs);
         }
     }
 }

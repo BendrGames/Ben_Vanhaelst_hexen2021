@@ -38,7 +38,9 @@ namespace DAE.HexSystem
 
             _actions.Add(CardType.Teleport, new TeleportAction<TCard, TPiece>());
 
-            _actions.Add(CardType.Push, new CleaveAction<TCard, TPiece>());                
+            _actions.Add(CardType.Push, new CleaveAction<TCard, TPiece>());
+
+            _actions.Add(CardType.Bomb, new BombAction<TCard, TPiece>());
 
         }
 

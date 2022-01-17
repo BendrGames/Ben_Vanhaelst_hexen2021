@@ -33,7 +33,11 @@ namespace DAE.Gamesystem
         [SerializeField] private UnityEvent OnActivate;
         [SerializeField] private UnityEvent Ondeactivate;
 
-       
+       public void Destroy()
+        {
+            gameObject.SetActive(false);
+        }
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             if (eventData.pointerDrag == null)

@@ -39,8 +39,37 @@ namespace DAE.HexSystem.Actions
             return this;
         }
 
+        public static List<IHex> Neighbours(IHex centerHex, Board<IHex, TPiece> board, Grid<IHex> grid)
+        {
+            var neighbours = new List<IHex>();
 
-        public ActionHelper<TCard, TPiece> StraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
+            if (centerHex != null)
+            {
+                grid.TryGetCoordinateOf(centerHex, out var coordinate);
+
+                var CenterX = coordinate.x;
+                var CenterY = coordinate.y;
+
+                foreach (var direction in ActionHelper<TCard, TPiece>._directions)
+                {
+                    var NewposX = CenterX + direction.x;
+                    var NewposY = CenterY + direction.y;
+
+                    if (grid.TryGetPositionAt((int)NewposX, (int)NewposY, out var newposition))
+                    {
+                        board.TryGetPieceAt(newposition, out var piece);
+                                                                     
+                            neighbours.Add(newposition);
+                    
+                    }
+                }
+            }
+            return neighbours;
+        }
+
+
+
+            public ActionHelper<TCard, TPiece> StraightAction(int xOffset, int yOffset, int numTiles = int.MaxValue, params Validator[] validators)
         {
             if (!_board.TryGetPositionOf(_piece, out var position))
                 return this;
@@ -268,7 +297,7 @@ namespace DAE.HexSystem.Actions
             else return _directions[currentDirection + 1];
         }
 
-        public Vector2[] _directions =
+        public static Vector2[] _directions =
             new Vector2[6]{new Vector2(1,0), new Vector2(1,-1), new Vector2(0,-1),
             new Vector2(-1,0), new Vector2(-1,1), new Vector2(0,1)};
 
